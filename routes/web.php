@@ -6,6 +6,7 @@ use App\Http\Controllers\StockController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\Dashboardinvestor;
+use App\Http\Controllers\DashboardmitraController;
 use App\Http\Controllers\InvestorController;
 use App\Http\Controllers\SahamController;
 use App\Http\Controllers\SupplyNetworkController;
@@ -101,14 +102,16 @@ Route::middleware(['auth', 'role:administrator'])->prefix('dashboard/admin')->gr
 
     Route::prefix('/stock')->group(function () {
         Route::get('/', [StockController::class,'index'])->name('admin.stock');
-        Route::get('/detail', [StockController::class, 'index'])->name('detail');
-    });
+        Route::get('/detail/{id}', [StockController::class, 'detail'])->name('admin.detail.stock');
+        Route::get('/manage/{id?}', [StockController::class, 'manage'])->name('admin.stock.manage');
+          Route::post('/store', [StockController::class, 'store'])->name('admin.stock.store');
+        Route::put('/update/{id}', [StockController::class, 'update'])->name('admin.stock.update');});
+    Route::delete('/delete/{id}', [StockController::class, 'destroy'])->name('admin.stock.destroy');
 });
 
 Route::middleware(['auth', 'role:mitra'])->group(function () {
-    Route::get('/dashboard/mitra', function () {
-        return view('dashboard.mitra');
-    })->name('dashboard.mitra');
+    Route::get('/dashboard/mitra', [DashboardmitraController::class,'index'])->name('dashboard.mitra');
+    
 });
 
 Route::middleware(['auth', 'role:investor'])->group(function () {

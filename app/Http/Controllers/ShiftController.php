@@ -23,6 +23,7 @@ class ShiftController extends Controller
             'start_time' => 'required',
             'end_time' => 'required',
             ]);
+            
             $data = new Shift();
             $data->name = $request->name;
             $data->start_time = $request->start_time;
