@@ -13,40 +13,35 @@ use Illuminate\Support\Facades\Log;
 
 class ProductController extends Controller
 {
-
 public function index(Request $request)
 {
-    $perPage = $request->input('perpage', 10); // Default 10
-    $sort = $request->input('sort', 'asc');    // Default A-Z
-    $search = $request->input('search');       // Optional
+    $perPage = $request->input('perpage', 10);
+    $sort = $request->input('sort', 'asc');
+    $search = $request->input('search');
 
-    // Base query untuk Produk Beli
-    $productsBuyQuery = Product::where('jenis', 'beli')
+    // Query untuk Produk Beli - menggunakan scope atau langsung where
+    $productsBuyQuery = Product::where('jenis', 'beli') // atau Product::beli()
         ->when($search, function ($query, $search) {
             $query->where('name', 'like', "%$search%");
         })
         ->orderBy('name', $sort);
 
-    // Base query untuk Produk Titip
-    $productsTitipQuery = Product::where('jenis', 'titip')
+    // Query untuk Produk Titipan - PERBAIKAN: gunakan 'titipan'
+    $productsTitipQuery = Product::where('jenis', 'titipan') // atau Product::titipan()
         ->when($search, function ($query, $search) {
             $query->where('name', 'like', "%$search%");
         })
         ->orderBy('name', $sort);
-
-    // Debug: Cek apakah ada data
-    $totalProductsBuy = $productsBuyQuery->count();
-    $totalProductsTitip = $productsTitipQuery->count();
 
     // Ambil data dengan pagination
     $productsBuy = $productsBuyQuery->paginate($perPage, ['*'], 'productsBuy');
     $productsTitip = $productsTitipQuery->paginate($perPage, ['*'], 'productsTitip');
 
-    // Debug: Log untuk memastikan data ada
-    Log::info('Total Products Buy: ' . $totalProductsBuy);
-    Log::info('Total Products Titip: ' . $totalProductsTitip);
-    Log::info('Products Buy Count: ' . $productsBuy->count());
-    Log::info('Products Titip Count: ' . $productsTitip->count());
+    // Debug hanya jika diperlukan (hapus di production)
+    if (config('app.debug')) {
+        Log::info('Products Buy Count: ' . $productsBuy->total());
+        Log::info('Products Titip Count: ' . $productsTitip->total());
+    }
 
     return view('page.superadmin.Product.index', compact('productsBuy', 'productsTitip'));
 }
