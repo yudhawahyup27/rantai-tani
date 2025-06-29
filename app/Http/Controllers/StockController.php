@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\newStock;
 use App\Models\Product;
 use App\Models\Stocks;
 use App\Models\Tossa;
@@ -70,7 +71,7 @@ class StockController extends Controller
         $stock->quantity += $quantityNew;
 
         // Simpan riwayat ke tabel new_stocks
-        \App\Models\NewStock::create([
+        newStock::create([
             'stock_id' => $stock->id,
             'quantity_added' => $quantityNew,
         ]);
