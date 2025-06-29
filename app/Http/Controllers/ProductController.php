@@ -9,30 +9,44 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use App\Notifications\ProductPriceChanged;
+use Illuminate\Support\Facades\Log;
 
 class ProductController extends Controller
 {
+
 public function index(Request $request)
 {
     $perPage = $request->input('perpage', 10); // Default 10
     $sort = $request->input('sort', 'asc');    // Default A-Z
     $search = $request->input('search');       // Optional
 
-    // Produk Beli
-    $productsBuy = Product::where('jenis', 'beli')
+    // Base query untuk Produk Beli
+    $productsBuyQuery = Product::where('jenis', 'beli')
         ->when($search, function ($query, $search) {
             $query->where('name', 'like', "%$search%");
         })
-        ->orderBy('name', $sort)
-        ->paginate($perPage, ['*'], 'productsBuy');
+        ->orderBy('name', $sort);
 
-    // Produk Titip
-    $productsTitip = Product::where('jenis', 'titip')
+    // Base query untuk Produk Titip
+    $productsTitipQuery = Product::where('jenis', 'titip')
         ->when($search, function ($query, $search) {
             $query->where('name', 'like', "%$search%");
         })
-        ->orderBy('name', $sort)
-        ->paginate($perPage, ['*'], 'productsTitip');
+        ->orderBy('name', $sort);
+
+    // Debug: Cek apakah ada data
+    $totalProductsBuy = $productsBuyQuery->count();
+    $totalProductsTitip = $productsTitipQuery->count();
+
+    // Ambil data dengan pagination
+    $productsBuy = $productsBuyQuery->paginate($perPage, ['*'], 'productsBuy');
+    $productsTitip = $productsTitipQuery->paginate($perPage, ['*'], 'productsTitip');
+
+    // Debug: Log untuk memastikan data ada
+    Log::info('Total Products Buy: ' . $totalProductsBuy);
+    Log::info('Total Products Titip: ' . $totalProductsTitip);
+    Log::info('Products Buy Count: ' . $productsBuy->count());
+    Log::info('Products Titip Count: ' . $productsTitip->count());
 
     return view('page.superadmin.Product.index', compact('productsBuy', 'productsTitip'));
 }

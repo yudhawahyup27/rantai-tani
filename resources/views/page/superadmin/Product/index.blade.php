@@ -38,12 +38,29 @@
         </div>
 
         <div class="card-body px-0 pt-0 pb-2">
+            {{-- Debug Info --}}
+            @if(config('app.debug'))
+                <div class="alert alert-info">
+                    <small>
+                        Debug: Produk Beli: {{ $productsBuy->total() ?? 0 }} |
+                        Produk Titip: {{ $productsTitip->total() ?? 0 }} |
+                        Search: {{ request('search') ?? 'none' }} |
+                        PerPage: {{ request('perpage', 10) }} |
+                        Sort: {{ request('sort', 'asc') }}
+                    </small>
+                </div>
+            @endif
+
             <ul class="nav nav-tabs" id="productTabs" role="tablist">
                 <li class="nav-item">
-                    <a class="nav-link active" id="beli-tab" data-bs-toggle="tab" href="#beli" role="tab">Produk Beli</a>
+                    <a class="nav-link active" id="beli-tab" data-bs-toggle="tab" href="#beli" role="tab">
+                        Produk Beli ({{ $productsBuy->total() ?? 0 }})
+                    </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" id="titip-tab" data-bs-toggle="tab" href="#titip" role="tab">Produk Titipan</a>
+                    <a class="nav-link" id="titip-tab" data-bs-toggle="tab" href="#titip" role="tab">
+                        Produk Titipan ({{ $productsTitip->total() ?? 0 }})
+                    </a>
                 </li>
             </ul>
             <div class="tab-content pt-3" id="productTabsContent">
@@ -55,7 +72,7 @@
                             <thead>
                                 <tr class="text-center">
                                     <th>No</th>
-                                    <th class="sticky-column" style="left: 0; z-index: 0;">Nama</th>
+                                    <th class="sticky-column" style="left: 0; z-index: 1; background: white;">Nama</th>
                                     <th>Gambar</th>
                                     <th>Harga Beli</th>
                                     <th>Harga Jual</th>
@@ -67,43 +84,56 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                @forelse ($productsBuy as $sn)
+                                @forelse ($productsBuy as $index => $sn)
                                     <tr class="text-center">
-                                        <td>{{ $productsBuy->firstItem() + $loop->index }}</td>
-                                        <td class="sticky-column bg-white" style="left: 0; z-index: 0;">{{ $sn->name }}</td>
+                                        <td>{{ ($productsBuy->currentPage() - 1) * $productsBuy->perPage() + $index + 1 }}</td>
+                                        <td class="sticky-column" style="left: 0; z-index: 1; background: white;">{{ $sn->name }}</td>
                                         <td>
                                             @if($sn->image)
-                                                <img src="{{ asset('/storage/app/public/' . $sn->image) }}" alt="{{ $sn->name }}" width="100">
+                                                <img src="{{ asset('storage/' . $sn->image) }}" alt="{{ $sn->name }}" width="80" class="img-thumbnail">
                                             @else
-                                                <span class="text-muted">No Image</span>
+                                                <span class="text-muted badge bg-secondary">No Image</span>
                                             @endif
                                         </td>
-                                        <td>Rp. {{ number_format($sn->price, 0, ',', '.') }}</td>
-                                        <td>Rp. {{ number_format($sn->price_sell, 0, ',', '.') }}</td>
+                                        <td>Rp. {{ number_format($sn->price ?? 0, 0, ',', '.') }}</td>
+                                        <td>Rp. {{ number_format($sn->price_sell ?? 0, 0, ',', '.') }}</td>
                                         <td>{{ $sn->category ?? '-' }}</td>
                                         <td>{{ $sn->satuan->nama_satuan ?? '-' }}</td>
-                                        <td>Rp. {{ number_format($sn->laba, 0, ',', '.') }}</td>
+                                        <td>Rp. {{ number_format($sn->laba ?? 0, 0, ',', '.') }}</td>
                                         <td>{{ $sn->updated_at ? $sn->updated_at->format('d-m-Y H:i') : '-' }}</td>
                                         <td>
-                                            <div class="d-flex justify-content-center gap-2">
+                                            <div class="d-flex justify-content-center gap-1">
                                                 <a href="{{ route('admin.product.manage', $sn->id) }}" class="btn btn-warning btn-sm">Edit</a>
                                                 <form action="{{ route('admin.product.delete', $sn->id) }}" method="POST" class="d-inline">
                                                     @csrf
                                                     @method('DELETE')
-                                                    <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Yakin ingin menghapus?')">Hapus</button>
+                                                    <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Yakin ingin menghapus {{ $sn->name }}?')">Hapus</button>
                                                 </form>
                                             </div>
                                         </td>
                                     </tr>
                                 @empty
-                                    <tr><td colspan="10" class="text-center">Tidak ada data</td></tr>
+                                    <tr>
+                                        <td colspan="10" class="text-center py-4">
+                                            <div class="alert alert-info mb-0">
+                                                <i class="fas fa-info-circle"></i>
+                                                @if(request('search'))
+                                                    Tidak ada produk beli yang ditemukan untuk pencarian "{{ request('search') }}"
+                                                @else
+                                                    Belum ada produk beli yang ditambahkan
+                                                @endif
+                                            </div>
+                                        </td>
+                                    </tr>
                                 @endforelse
                             </tbody>
                         </table>
                     </div>
-                    <div class="d-flex justify-content-center mt-3">
-                        {{ $productsBuy->appends(request()->query())->fragment('beli')->links() }}
-                    </div>
+                    @if($productsBuy->hasPages())
+                        <div class="d-flex justify-content-center mt-3">
+                            {{ $productsBuy->appends(request()->query())->fragment('beli')->links() }}
+                        </div>
+                    @endif
                 </div>
 
                 {{-- Tab Produk Titipan --}}
@@ -113,7 +143,7 @@
                             <thead>
                                 <tr class="text-center">
                                     <th>No</th>
-                                    <th class="sticky-column" style="left: 0; z-index: 0;">Nama</th>
+                                    <th class="sticky-column" style="left: 0; z-index: 1; background: white;">Nama</th>
                                     <th>Gambar</th>
                                     <th>Harga Beli</th>
                                     <th>Harga Jual</th>
@@ -125,47 +155,87 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                @forelse ($productsTitip as $sn)
+                                @forelse ($productsTitip as $index => $sn)
                                     <tr class="text-center">
-                                        <td>{{ $productsTitip->firstItem() + $loop->index }}</td>
-                                        <td class="sticky-column bg-white" style="left: 0; z-index: 0;">{{ $sn->name }}</td>
+                                        <td>{{ ($productsTitip->currentPage() - 1) * $productsTitip->perPage() + $index + 1 }}</td>
+                                        <td class="sticky-column" style="left: 0; z-index: 1; background: white;">{{ $sn->name }}</td>
                                         <td>
                                             @if($sn->image)
-                                                <img src="{{ asset('/storage/app/public/' . $sn->image) }}" alt="{{ $sn->name }}" width="100">
+                                                <img src="{{ asset('/storage/app/public/' . $sn->image) }}" alt="{{ $sn->name }}" width="80" class="img-thumbnail">
                                             @else
-                                                <span class="text-muted">No Image</span>
+                                                <span class="text-muted badge bg-secondary">No Image</span>
                                             @endif
                                         </td>
-                                        <td>Rp. {{ number_format($sn->price, 0, ',', '.') }}</td>
-                                        <td>Rp. {{ number_format($sn->price_sell, 0, ',', '.') }}</td>
+                                        <td>Rp. {{ number_format($sn->price ?? 0, 0, ',', '.') }}</td>
+                                        <td>Rp. {{ number_format($sn->price_sell ?? 0, 0, ',', '.') }}</td>
                                         <td>{{ $sn->category ?? '-' }}</td>
                                         <td>{{ $sn->satuan->nama_satuan ?? '-' }}</td>
-                                        <td>Rp. {{ number_format($sn->laba, 0, ',', '.') }}</td>
+                                        <td>Rp. {{ number_format($sn->laba ?? 0, 0, ',', '.') }}</td>
                                         <td>{{ $sn->updated_at ? $sn->updated_at->format('d-m-Y H:i') : '-' }}</td>
                                         <td>
-                                            <div class="d-flex justify-content-center gap-2">
+                                            <div class="d-flex justify-content-center gap-1">
                                                 <a href="{{ route('admin.product.manage', $sn->id) }}" class="btn btn-warning btn-sm">Edit</a>
                                                 <form action="{{ route('admin.product.delete', $sn->id) }}" method="POST" class="d-inline">
                                                     @csrf
                                                     @method('DELETE')
-                                                    <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Yakin ingin menghapus?')">Hapus</button>
+                                                    <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Yakin ingin menghapus {{ $sn->name }}?')">Hapus</button>
                                                 </form>
                                             </div>
                                         </td>
                                     </tr>
                                 @empty
-                                    <tr><td colspan="10" class="text-center">Tidak ada data</td></tr>
+                                    <tr>
+                                        <td colspan="10" class="text-center py-4">
+                                            <div class="alert alert-info mb-0">
+                                                <i class="fas fa-info-circle"></i>
+                                                @if(request('search'))
+                                                    Tidak ada produk titipan yang ditemukan untuk pencarian "{{ request('search') }}"
+                                                @else
+                                                    Belum ada produk titipan yang ditambahkan
+                                                @endif
+                                            </div>
+                                        </td>
+                                    </tr>
                                 @endforelse
                             </tbody>
                         </table>
                     </div>
-                    <div class="d-flex justify-content-center mt-3">
-                        {{ $productsTitip->appends(request()->query())->fragment('titip')->links() }}
-                    </div>
+                    @if($productsTitip->hasPages())
+                        <div class="d-flex justify-content-center mt-3">
+                            {{ $productsTitip->appends(request()->query())->fragment('titip')->links() }}
+                        </div>
+                    @endif
                 </div>
 
             </div>
         </div>
     </div>
 </div>
+
+{{-- JavaScript untuk mengingat tab aktif --}}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Cek apakah ada fragment di URL
+    if (window.location.hash) {
+        const hash = window.location.hash;
+        if (hash === '#titip') {
+            // Aktifkan tab titip
+            const titipTab = document.getElementById('titip-tab');
+            const beliTab = document.getElementById('beli-tab');
+            const titipPane = document.getElementById('titip');
+            const beliPane = document.getElementById('beli');
+
+            if (titipTab && beliTab && titipPane && beliPane) {
+                // Hapus active dari tab beli
+                beliTab.classList.remove('active');
+                beliPane.classList.remove('show', 'active');
+
+                // Aktifkan tab titip
+                titipTab.classList.add('active');
+                titipPane.classList.add('show', 'active');
+            }
+        }
+    }
+});
+</script>
 @endsection
