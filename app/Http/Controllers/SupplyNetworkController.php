@@ -21,7 +21,7 @@ class SupplyNetworkController extends Controller
             ->orderBy('created_at', $sort)
             ->paginate($perPage);
 
-        return view('page.superadmin.Supplynetwork.index', compact('data'));
+        return view('page.superadmin.SupplyNetwork.index', compact('data'));
     }
 
     public function manage ($id= null){
