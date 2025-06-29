@@ -22,7 +22,7 @@ class SewaController extends Controller
                     ->orderBy('username')
                     ->get();
 
-        return view('page.superadmin.sewa.manage', compact('data', 'users'));
+        return view('page.superadmin.Sewa.manage', compact('data', 'users'));
     }
 
     public function store(Request $request)
