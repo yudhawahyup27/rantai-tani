@@ -15,7 +15,7 @@ class UserController extends Controller
     // Menampilkan daftar user
     public function userpage() {
         $users = User::with(['role', 'userTossa', 'workShift'])->get();
-        return view('page.superadmin.user.index', compact('users'));
+        return view('page.superadmin.User.index', compact('users'));
     }
 
     // Menampilkan form create/edit user
@@ -24,7 +24,7 @@ class UserController extends Controller
         $roles = Role::all();
         $tossas = Tossa::all();
         $shifts = Shift::all();
-        return view('page.superadmin.user.manage', compact('data', 'roles', 'tossas', 'shifts'));
+        return view('page.superadmin.User.manage', compact('data', 'roles', 'tossas', 'shifts'));
     }
 
     // Menyimpan user baru
@@ -52,7 +52,7 @@ class UserController extends Controller
             'id_role' => $request->id_role,
         ]);
 
-        return redirect()->route('admin.user')->with('success', 'User berhasil ditambahkan'); // Ganti nama rute jika diperlukan
+        return redirect()->route('admin.User')->with('success', 'User berhasil ditambahkan'); // Ganti nama rute jika diperlukan
     }
 
     public function update(Request $request, $id) {
@@ -83,12 +83,12 @@ class UserController extends Controller
             'id_role' => $request->id_role,
         ]);
 
-        return redirect()->route('admin.user')->with('success', 'User berhasil diperbarui'); // Ganti nama rute jika diperlukan
+        return redirect()->route('admin.User')->with('success', 'User berhasil diperbarui'); // Ganti nama rute jika diperlukan
     }
 
     // Menghapus user
     public function destroy($id) {
         User::findOrFail($id)->delete();
-        return redirect()->route('admin.user')->with('success', 'User berhasil dihapus');
+        return redirect()->route('admin.User')->with('success', 'User berhasil dihapus');
     }
 }
