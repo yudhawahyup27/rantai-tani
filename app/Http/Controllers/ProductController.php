@@ -14,27 +14,28 @@ class ProductController extends Controller
 {
 public function index(Request $request)
 {
-    $search = $request->input('search');
-    $perPage = $request->input('perpage', 5);
-    $sort = $request->input('sort', 'asc');
+    $perPage = $request->input('perpage', 10); // Default 10
+    $sort = $request->input('sort', 'asc');    // Default A-Z
+    $search = $request->input('search');       // Optional
 
+    // Produk Beli
     $productsBuy = Product::where('jenis', 'beli')
         ->when($search, function ($query, $search) {
-            return $query->where('name', 'like', "%{$search}%");
+            $query->where('name', 'like', "%$search%");
         })
         ->orderBy('name', $sort)
-        ->paginate($perPage, ['*'], 'beli');
+        ->paginate($perPage, ['*'], 'productsBuy');
 
+    // Produk Titip
     $productsTitip = Product::where('jenis', 'titip')
         ->when($search, function ($query, $search) {
-            return $query->where('name', 'like', "%{$search}%");
+            $query->where('name', 'like', "%$search%");
         })
         ->orderBy('name', $sort)
-        ->paginate($perPage, ['*'], 'titip');
+        ->paginate($perPage, ['*'], 'productsTitip');
 
     return view('page.superadmin.Product.index', compact('productsBuy', 'productsTitip'));
 }
-
 
     public function manage($id = null){
         $data = $id ? Product::findOrFail($id) : new Product();
