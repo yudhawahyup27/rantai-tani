@@ -7,7 +7,7 @@
             <h3>Data Update Harga</h3>
 
             <div class="table-responsive mt-4">
-                <table class="table table-bordered">
+                <table class="table ">
                     <thead>
                         <tr>
                             <th>Product</th>
