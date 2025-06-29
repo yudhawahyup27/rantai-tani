@@ -9,12 +9,12 @@ class ShiftController extends Controller
 {
     public function index () {
         $data = Shift::all();
-        return view('page.superadmin.shift.index',compact('data'));
+        return view('page.superadmin.Shift.index',compact('data'));
     }
 
     public function manage($id = null){
         $data = $id ? Shift::findOrFail($id) : new Shift();
-        return view('page.superadmin.shift.manage', compact('data'));
+        return view('page.superadmin.Shift.manage', compact('data'));
     }
 
     public function store(Request $request){
@@ -23,7 +23,7 @@ class ShiftController extends Controller
             'start_time' => 'required',
             'end_time' => 'required',
             ]);
-            
+
             $data = new Shift();
             $data->name = $request->name;
             $data->start_time = $request->start_time;
