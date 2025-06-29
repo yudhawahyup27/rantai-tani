@@ -139,7 +139,7 @@ use Illuminate\Support\Facades\Request;
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link {{ Request::routeIs('dashboard.mitra.laporan') ? 'active' : '' }}" href="{{ route('dashboard.mitra.laporan') }}">
+                        <a class="nav-link {{ Request::routeIs('mitra.laporan.index') ? 'active' : '' }}" href="{{ route('mitra.laporan.index') }}">
                             <div class="icon icon-shape icon-sm border-radius-md text-center me-2 d-flex align-items-center justify-content-center">
                                 <i class="ni ni-briefcase-24 text-dark text-sm opacity-10"></i>
                             </div>
