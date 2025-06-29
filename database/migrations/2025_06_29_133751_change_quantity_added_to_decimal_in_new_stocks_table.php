@@ -6,22 +6,27 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     *
-     * @return void
-     */
-     public function up()
+    public function up()
     {
         Schema::table('new_stocks', function (Blueprint $table) {
-            $table->decimal('quantity_added', 10, 2)->change();
+            // Drop kolom lama
+            $table->dropColumn('quantity_added');
+        });
+
+        Schema::table('new_stocks', function (Blueprint $table) {
+            // Tambahkan kolom baru dengan tipe decimal
+            $table->decimal('quantity_added', 10, 2)->default(0);
         });
     }
 
     public function down()
     {
         Schema::table('new_stocks', function (Blueprint $table) {
-            $table->integer('quantity_added')->change();
+            $table->dropColumn('quantity_added');
+        });
+
+        Schema::table('new_stocks', function (Blueprint $table) {
+            $table->integer('quantity_added')->default(0);
         });
     }
 };
