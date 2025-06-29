@@ -21,13 +21,13 @@ class SupplyNetworkController extends Controller
             ->orderBy('created_at', $sort)
             ->paginate($perPage);
 
-        return view('page.superadmin.supplynetwork.index', compact('data'));
+        return view('page.superadmin.Supplynetworkindex', compact('data'));
     }
 
     public function manage ($id= null){
         $data = $id ? Tossa::findOrFail($id) : new Tossa();
 
-        return view('page.superadmin.supplynetwork.manage', compact('data'));
+        return view('page.superadmin.Supplynetworkmanage', compact('data'));
     }
     public function store(Request $request){
         $request->validate([
