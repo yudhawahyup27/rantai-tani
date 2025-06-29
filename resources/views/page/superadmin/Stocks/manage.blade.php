@@ -61,7 +61,7 @@
         @if ($data->exists)
           <div class="mb-3">
             <label for="quantity_new" class="form-label">Jumlah Stok Baru</label>
-            <input type="number" name="quantity_new" class="form-control" value="{{ old('quantity_new', $data->quantity_new) }}" required>
+            <input type="text" name="quantity_new" class="form-control" value="{{ old('quantity_new', $data->quantity_new) }}" required>
         </div>
 
         @endif
