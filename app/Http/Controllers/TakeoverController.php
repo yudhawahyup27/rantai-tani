@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\investor;
+use App\Models\Investor;
 use App\Models\Mastersaham;
 use App\Models\Takeover;
 use App\Models\User;
@@ -25,7 +25,7 @@ class TakeoverController extends Controller
         $data = $id ? Takeover::findOrFail($id) : new Takeover();
 
         // Ambil investor aktif
-        $investors = investor::with('user', 'tossa')->get();
+        $investors = Investor::with('user', 'tossa')->get();
 
         // Ambil user sebagai tujuan takeover
         $users = User::where('id_role', '3')->get();
@@ -47,7 +47,7 @@ class TakeoverController extends Controller
         try {
             DB::beginTransaction();
 
-            $investorLama = investor::findOrFail($validated['investor_id']);
+            $investorLama = Investor::findOrFail($validated['investor_id']);
 
             // Cek validasi jumlah lot
             if ($validated['perlot'] > $investorLama->perlot) {
@@ -71,7 +71,7 @@ class TakeoverController extends Controller
             $investorLama->save();
 
             // Tambahkan lot ke investor baru atau buat baru
-            $investorBaru = investor::where('user_id', $validated['to_user_id'])
+            $investorBaru = Investor::where('user_id', $validated['to_user_id'])
                 ->where('tossa_id', $investorLama->tossa_id)
                 ->first();
 
@@ -79,7 +79,7 @@ class TakeoverController extends Controller
                 $investorBaru->perlot += $validated['perlot'];
                 $investorBaru->save();
             } else {
-                $investorBaru = investor::create([
+                $investorBaru = Investor::create([
                     'user_id' => $validated['to_user_id'],
                     'tossa_id' => $investorLama->tossa_id,
                     'perlot' => $validated['perlot'],
@@ -123,10 +123,10 @@ class TakeoverController extends Controller
             $takeover = Takeover::findOrFail($id);
 
             // Ambil investor lama (pemilik asal saham sebelum di-takeover)
-            $investorFrom = investor::findOrFail($request->investor_id);
+            $investorFrom = Investor::findOrFail($request->investor_id);
 
             // Ambil investor penerima
-            $investorTo = investor::firstOrNew([
+            $investorTo = Investor::firstOrNew([
                 'user_id' => $request->to_user_id,
                 'tossa_id' => $takeover->tossa_id,
             ]);
@@ -172,10 +172,10 @@ class TakeoverController extends Controller
             $takeover = Takeover::findOrFail($id);
 
             // Ambil investor awal (pengirim)
-            $investorFrom = investor::findOrFail($takeover->investor_id);
+            $investorFrom = Investor::findOrFail($takeover->investor_id);
 
             // Ambil investor penerima
-            $investorTo = investor::where('user_id', $takeover->to_user_id)
+            $investorTo = Investor::where('user_id', $takeover->to_user_id)
                 ->where('tossa_id', $takeover->tossa_id)
                 ->first();
 
