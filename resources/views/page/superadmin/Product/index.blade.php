@@ -17,7 +17,7 @@
         @endif
 
         <div class="card-header pb-0 d-flex flex-column flex-md-row justify-content-between">
-            <h6>Daftar Products</h6>
+            <h6>Daftar Produk</h6>
             <div class="d-flex flex-column flex-md-row">
                 <form method="GET" action="{{ route('admin.product') }}" class="mb-2 me-2">
                     <div class="d-flex">
@@ -33,7 +33,7 @@
                         </select>
                     </div>
                 </form>
-                <a href="{{ route('admin.product.manage') }}" class="btn btn-primary">Tambah Product</a>
+                <a href="{{ route('admin.product.manage') }}" class="btn btn-primary">Tambah Produk</a>
             </div>
         </div>
 
@@ -47,139 +47,123 @@
                 </li>
             </ul>
             <div class="tab-content pt-3" id="productTabsContent">
+
+                {{-- Tab Produk Beli --}}
                 <div class="tab-pane fade show active" id="beli" role="tabpanel">
-                    @php $groupedBuy = $productsBuy->groupBy('category'); @endphp
-                    @foreach ($groupedBuy as $category => $products)
-                        <div class="card mb-4">
-                            <div class="card-header bg-secondary text-white">
-                                <h6 class="mb-0 text-uppercase">{{ $category ?? 'Tanpa Kategori' }}</h6>
-                            </div>
-                            <div class="card-body">
-                                <div class="table-responsive p-0">
-                                    <table class="table align-items-center mb-0">
-                                        <thead>
-                                            <tr class="text-center">
-                                                <th>No</th>
-                                                <th class="sticky-column" style="left: 0; z-index: 0;">Name</th>
-                                                <th>Image</th>
-                                                <th>Price Buy</th>
-                                                <th>Price Sell</th>
-                                                <th>Category</th>
-                                                <th>Satuan</th>
-                                                <th>Laba</th>
-                                                <th>Di Update</th>
-                                                <th>Aksi</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            @forelse ($products as $sn)
-                                                <tr class="text-center">
-                                                    <td>{{ $loop->iteration }}</td>
-                                                    <td class="sticky-column bg-white" style="left: 0; z-index: 0;">{{ $sn->name }}</td>
-                                                    <td>
-                                                        @if($sn->image)
-                                                            <img src="{{ asset('/storage/app/public/' . $sn->image) }}" alt="{{ $sn->name }}" width="100">
-                                                        @else
-                                                            <span class="text-muted">No Image</span>
-                                                        @endif
-                                                    </td>
-                                                    <td>Rp. {{ number_format($sn->price, 0, ',', '.') }}</td>
-                                                    <td>Rp. {{ number_format($sn->price_sell, 0, ',', '.') }}</td>
-                                                    <td>{{ $sn->category ?? '-' }}</td>
-                                                    <td>{{ $sn->satuan->nama_satuan ?? '-' }}</td>
-                                                    <td>Rp. {{ number_format($sn->laba, 0, ',', '.') }}</td>
-                                                    <td>{{ $sn->updated_at ? $sn->updated_at->format('d-m-Y H:i') : '-' }}</td>
-                                                    <td>
-                                                        <div class="d-flex justify-content-center gap-2">
-                                                            <a href="{{ route('admin.product.manage', $sn->id) }}" class="btn btn-warning btn-sm">Edit</a>
-                                                            <form action="{{ route('admin.product.delete', $sn->id) }}" method="POST" class="d-inline">
-                                                                @csrf
-                                                                @method('DELETE')
-                                                                <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Yakin ingin menghapus?')">Hapus</button>
-                                                            </form>
-                                                        </div>
-                                                    </td>
-                                                </tr>
-                                            @empty
-                                                <tr><td colspan="10" class="text-center">Tidak ada data</td></tr>
-                                            @endforelse
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-                        </div>
-                    @endforeach
+                    <div class="table-responsive p-3">
+                        <table class="table align-items-center mb-0">
+                            <thead>
+                                <tr class="text-center">
+                                    <th>No</th>
+                                    <th class="sticky-column" style="left: 0; z-index: 0;">Nama</th>
+                                    <th>Gambar</th>
+                                    <th>Harga Beli</th>
+                                    <th>Harga Jual</th>
+                                    <th>Kategori</th>
+                                    <th>Satuan</th>
+                                    <th>Laba</th>
+                                    <th>Diupdate</th>
+                                    <th>Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @forelse ($productsBuy as $sn)
+                                    <tr class="text-center">
+                                        <td>{{ $productsBuy->firstItem() + $loop->index }}</td>
+                                        <td class="sticky-column bg-white" style="left: 0; z-index: 0;">{{ $sn->name }}</td>
+                                        <td>
+                                            @if($sn->image)
+                                                <img src="{{ asset('/storage/app/public/' . $sn->image) }}" alt="{{ $sn->name }}" width="100">
+                                            @else
+                                                <span class="text-muted">No Image</span>
+                                            @endif
+                                        </td>
+                                        <td>Rp. {{ number_format($sn->price, 0, ',', '.') }}</td>
+                                        <td>Rp. {{ number_format($sn->price_sell, 0, ',', '.') }}</td>
+                                        <td>{{ $sn->category ?? '-' }}</td>
+                                        <td>{{ $sn->satuan->nama_satuan ?? '-' }}</td>
+                                        <td>Rp. {{ number_format($sn->laba, 0, ',', '.') }}</td>
+                                        <td>{{ $sn->updated_at ? $sn->updated_at->format('d-m-Y H:i') : '-' }}</td>
+                                        <td>
+                                            <div class="d-flex justify-content-center gap-2">
+                                                <a href="{{ route('admin.product.manage', $sn->id) }}" class="btn btn-warning btn-sm">Edit</a>
+                                                <form action="{{ route('admin.product.delete', $sn->id) }}" method="POST" class="d-inline">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Yakin ingin menghapus?')">Hapus</button>
+                                                </form>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                @empty
+                                    <tr><td colspan="10" class="text-center">Tidak ada data</td></tr>
+                                @endforelse
+                            </tbody>
+                        </table>
+                    </div>
                     <div class="d-flex justify-content-center mt-3">
                         {{ $productsBuy->appends(request()->query())->fragment('beli')->links() }}
                     </div>
                 </div>
 
+                {{-- Tab Produk Titipan --}}
                 <div class="tab-pane fade" id="titip" role="tabpanel">
-                    @php $groupedTitip = $productsTitip->groupBy('category'); @endphp
-                    @foreach ($groupedTitip as $category => $products)
-                        <div class="card mb-4">
-                            <div class="card-header bg-secondary text-white">
-                                <h6 class="mb-0 text-uppercase">{{ $category ?? 'Tanpa Kategori' }}</h6>
-                            </div>
-                            <div class="card-body">
-                                <div class="table-responsive p-0">
-                                    <table class="table align-items-center mb-0">
-                                        <thead>
-                                            <tr class="text-center">
-                                                <th>No</th>
-                                                <th class="sticky-column" style="left: 0; z-index: 0;">Name</th>
-                                                <th>Image</th>
-                                                <th>Price Buy</th>
-                                                <th>Price Sell</th>
-                                                <th>Category</th>
-                                                <th>Satuan</th>
-                                                <th>Laba</th>
-                                                <th>Di Update</th>
-                                                <th>Aksi</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            @forelse ($products as $sn)
-                                                <tr class="text-center">
-                                                    <td>{{ $loop->iteration }}</td>
-                                                    <td class="sticky-column bg-white" style="left: 0; z-index: 0;">{{ $sn->name }}</td>
-                                                    <td>
-                                                        @if($sn->image)
-                                                            <img src="{{ asset('/storage/app/public/' . $sn->image) }}" alt="{{ $sn->name }}" width="100">
-                                                        @else
-                                                            <span class="text-muted">No Image</span>
-                                                        @endif
-                                                    </td>
-                                                    <td>Rp. {{ number_format($sn->price, 0, ',', '.') }}</td>
-                                                    <td>Rp. {{ number_format($sn->price_sell, 0, ',', '.') }}</td>
-                                                    <td>{{ $sn->category ?? '-' }}</td>
-                                                    <td>{{ $sn->satuan->nama_satuan ?? '-' }}</td>
-                                                    <td>Rp. {{ number_format($sn->laba, 0, ',', '.') }}</td>
-                                                    <td>{{ $sn->updated_at ? $sn->updated_at->format('d-m-Y H:i') : '-' }}</td>
-                                                    <td>
-                                                        <div class="d-flex justify-content-center gap-2">
-                                                            <a href="{{ route('admin.product.manage', $sn->id) }}" class="btn btn-warning btn-sm">Edit</a>
-                                                            <form action="{{ route('admin.product.delete', $sn->id) }}" method="POST" class="d-inline">
-                                                                @csrf
-                                                                @method('DELETE')
-                                                                <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Yakin ingin menghapus?')">Hapus</button>
-                                                            </form>
-                                                        </div>
-                                                    </td>
-                                                </tr>
-                                            @empty
-                                                <tr><td colspan="10" class="text-center">Tidak ada data</td></tr>
-                                            @endforelse
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-                        </div>
-                    @endforeach
+                    <div class="table-responsive p-3">
+                        <table class="table align-items-center mb-0">
+                            <thead>
+                                <tr class="text-center">
+                                    <th>No</th>
+                                    <th class="sticky-column" style="left: 0; z-index: 0;">Nama</th>
+                                    <th>Gambar</th>
+                                    <th>Harga Beli</th>
+                                    <th>Harga Jual</th>
+                                    <th>Kategori</th>
+                                    <th>Satuan</th>
+                                    <th>Laba</th>
+                                    <th>Diupdate</th>
+                                    <th>Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @forelse ($productsTitip as $sn)
+                                    <tr class="text-center">
+                                        <td>{{ $productsTitip->firstItem() + $loop->index }}</td>
+                                        <td class="sticky-column bg-white" style="left: 0; z-index: 0;">{{ $sn->name }}</td>
+                                        <td>
+                                            @if($sn->image)
+                                                <img src="{{ asset('/storage/app/public/' . $sn->image) }}" alt="{{ $sn->name }}" width="100">
+                                            @else
+                                                <span class="text-muted">No Image</span>
+                                            @endif
+                                        </td>
+                                        <td>Rp. {{ number_format($sn->price, 0, ',', '.') }}</td>
+                                        <td>Rp. {{ number_format($sn->price_sell, 0, ',', '.') }}</td>
+                                        <td>{{ $sn->category ?? '-' }}</td>
+                                        <td>{{ $sn->satuan->nama_satuan ?? '-' }}</td>
+                                        <td>Rp. {{ number_format($sn->laba, 0, ',', '.') }}</td>
+                                        <td>{{ $sn->updated_at ? $sn->updated_at->format('d-m-Y H:i') : '-' }}</td>
+                                        <td>
+                                            <div class="d-flex justify-content-center gap-2">
+                                                <a href="{{ route('admin.product.manage', $sn->id) }}" class="btn btn-warning btn-sm">Edit</a>
+                                                <form action="{{ route('admin.product.delete', $sn->id) }}" method="POST" class="d-inline">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Yakin ingin menghapus?')">Hapus</button>
+                                                </form>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                @empty
+                                    <tr><td colspan="10" class="text-center">Tidak ada data</td></tr>
+                                @endforelse
+                            </tbody>
+                        </table>
+                    </div>
                     <div class="d-flex justify-content-center mt-3">
                         {{ $productsTitip->appends(request()->query())->fragment('titip')->links() }}
                     </div>
                 </div>
+
             </div>
         </div>
     </div>
