@@ -12,8 +12,8 @@ class Investor extends Model
         'user_id',
         'tossa_id',
         'perlot',
-        'Deviden', // Jika perlu menyimpan nominal dividen
-        'total', // Jika perlu menyimpan nominal dividen
+        'Deviden', // Jika perlu menyimpan Nominal Dividen /Bulan
+        'total', // Jika perlu menyimpan Nominal Dividen /Bulan
     ];
 
     public function user()

@@ -59,9 +59,9 @@
                 <input type="text" id="persentase" name="persentase" class="form-control" value="{{ old('persentase', '0%') }}" readonly>
             </div>
 
-            <!-- Nominal Dividen -->
+            <!-- Nominal Dividen /Bulan -->
             <div class="mb-3">
-                <label for="Deviden_display">Nominal Dividen</label>
+                <label for="Deviden_display">Nominal Dividen /Bulan</label>
                 <input type="text" id="Deviden_display" class="form-control" readonly>
                 <input type="hidden" id="Deviden" name="Deviden" value="{{ old('Deviden', $data->Deviden) }}">
                 @error('Deviden')

@@ -40,7 +40,7 @@
                 @enderror
             </div>
             <div class="mb-3">
-                <label for="persentase">Persentase </label>
+                <label for="persentase">Persentase /Tahun </label>
                 <input type="number" name="persentase" class="form-control @error('persentase') is-invalid @enderror"
                        value="{{ old('persentase', $data->persentase ?? '') }}" required>
                 @error('persentase')
