@@ -15,7 +15,7 @@ class Dashboardinvestor extends Controller
 
         $userId = $request->user()->id;
 
-        $investments = Investor::with('tossa')
+        $investments = investor::with('tossa')
         ->where('user_id', $userId)
         ->get();
 
@@ -65,7 +65,7 @@ class Dashboardinvestor extends Controller
     }
 
     public function detail(){
-        $investments = Investor::with('tossa')->where('user_id', auth()->id())->get();
+        $investments = investor::with('tossa')->where('user_id', auth()->id())->get();
 
         return view('page.investor.detail-saham.index', compact('investments'));
     }

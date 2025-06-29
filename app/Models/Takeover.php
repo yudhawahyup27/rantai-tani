@@ -31,7 +31,7 @@ class Takeover extends Model
 
     public function investor()
     {
-        return $this->belongsTo(Investor::class, 'investor_id');
+        return $this->belongsTo(investor::class, 'investor_id');
     }
 
     public function tossa()
