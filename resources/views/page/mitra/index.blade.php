@@ -23,8 +23,8 @@
                         <tr class="text-center">
                             <td>{{ $loop->iteration }}</td>
                             <td class="sticky-column bg-white" style="left: 0; z-index: 0;">{{ $d->product->name }}</td>
-                            <td>Rp {{ $d->old_price_sell }}</td>
-                            <td>Rp {{ $d->new_price_sell }}</td>
+                            <td>Rp {{ number_format($d->old_price_sell, 0, ',', '.') }}</td>
+                            <td>Rp {{ number_format($d->new_price_sell, 0, ',', '.') }}</td>
                             @if($d->new_price_sell > $d->old_price_sell)
        <td> <span class="badge bg-success">Naik</span></td>
     @elseif($d->new_price_sell < $d->old_price_sell)
@@ -36,7 +36,7 @@
                         </tr>
                         @empty
                         <tr>
-                            <td colspan="4" class="text-center">Data tidak ditemukan</td>
+                            <td colspan="6" class="text-center">Data tidak ditemukan</td>
                         </tr>
                         @endforelse
                     </tbody>
