@@ -12,39 +12,21 @@ use App\Notifications\ProductPriceChanged;
 
 class ProductController extends Controller
 {
-  public function index(Request $request)
-{
-    $search = $request->input('search');
-    $sort = $request->input('sort', 'asc');
-    $perPage = $request->input('perpage', 5);
+    public function index(Request $request){
+        $search = $request->input('search');
+        $sort = $request->input('sort', 'asc');
+        $perPage = $request->input('perpage', 5);
 
-    // Base query dengan relationship dan search logic dari query lama
-    $baseQuery = Product::with('satuan');
+        $data = Product::with('satuan')
+            ->where(function ($query) use ($search) {
+                $query->where('name', 'like', '%' . $search . '%')
+                      ->orWhere('price', 'like', '%' . $search . '%');
+            })
+            ->orderBy('created_at', $sort)
+            ->paginate($perPage);
 
-    // Terapkan search jika ada
-    if ($search) {
-        $baseQuery->where(function ($query) use ($search) {
-            $query->where('name', 'like', '%' . $search . '%')
-                  ->orWhere('price', 'like', '%' . $search . '%');
-        });
+        return view('page.superadmin.Product.index', compact('data'));
     }
-
-    // Query untuk Produk Beli
-    $productsBuyQuery = clone $baseQuery;
-    $productsBuy = $productsBuyQuery
-        ->where('jenis', 'beli')
-        ->orderBy('created_at', $sort)
-        ->paginate($perPage, ['*'], 'productsBuy');
-
-    // Query untuk Produk Titipan
-    $productsTitipQuery = clone $baseQuery;
-    $productsTitip = $productsTitipQuery
-        ->where('jenis', 'titipan')
-        ->orderBy('created_at', $sort)
-        ->paginate($perPage, ['*'], 'productsTitip');
-
-    return view('page.superadmin.Product.index', compact('productsBuy', 'productsTitip'));
-}
 
     public function manage($id = null){
         $data = $id ? Product::findOrFail($id) : new Product();
