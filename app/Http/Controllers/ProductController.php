@@ -19,7 +19,7 @@ class ProductController extends Controller
 
     // Query untuk Product Beli
     $dataBeli = Product::with('satuan')
-        ->where('jenis', 'beli') // Asumsi ada field 'jenis' untuk membedakan
+        ->where('category', 'beli') // Asumsi ada field 'category' untuk membedakan
         ->where(function ($query) use ($search) {
             if ($search) {
                 $query->where('name', 'like', '%' . $search . '%')
@@ -32,7 +32,7 @@ class ProductController extends Controller
 
     // Query untuk Product Titipan
     $dataTitipan = Product::with('satuan')
-        ->where('jenis', 'titipan') // Asumsi ada field 'type' untuk membedakan
+        ->where('category', 'titipan') // Asumsi ada field 'type' untuk membedakan
         ->where(function ($query) use ($search) {
             if ($search) {
                 $query->where('name', 'like', '%' . $search . '%')
