@@ -15,7 +15,7 @@
         🔔 <span class="badge badge-warning">{{ auth()->user()->unreadNotifications->count() }}</span>
     </a>
     <div class="dropdown-menu dropdown-menu-right">
-        @forelse(auth()->user()->unreadNotifications as $notif)
+        {{-- @forelse(auth()->user()->unreadNotifications as $notif)
             <a href="#" class="dropdown-item">
                 <strong>{{ $notif->data['title'] }}</strong><br>
                 <small>{{ $notif->data['message'] }}</small>
@@ -24,7 +24,7 @@
             <div class="dropdown-divider"></div>
         @empty
             <a class="dropdown-item text-center">Tidak ada notifikasi</a>
-        @endforelse
+        @endforelse --}}
     </div>
 </li>
                 <li class="nav-item d-flex align-items-center justify-content-center ">
