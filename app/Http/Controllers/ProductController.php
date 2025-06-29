@@ -25,7 +25,7 @@ class ProductController extends Controller
             ->orderBy('created_at', $sort)
             ->paginate($perPage);
 
-        return view('page.superadmin.product.index', compact('data'));
+        return view('page.superadmin.Product.index', compact('data'));
     }
 
     public function manage($id = null){
