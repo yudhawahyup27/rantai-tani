@@ -34,7 +34,7 @@ class StockController extends Controller
         'product_id' => 'required',
         // 'tossa_id' => 'required|unique:stocks,tossa_id', // Hapus unique di sini jika ingin unique kombinasi
         'tossa_id'   => 'required', // Cukup required
-        'quantity'   => 'required|numeric',
+        'quantity'   => 'required|',
     ]);
 
     // 2. Cek apakah kombinasi product_id dan tossa_id sudah ada
