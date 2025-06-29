@@ -5,7 +5,7 @@
     <div class="card">
         <div class="card-body">
             <h3>Data Laporan</h3>
-    <a href="{{ route('dashboard.mitra.laporan.manage') }}" class="btn btn-primary">Create Laporan</a>
+    <a href="{{ route('mitra.laporan.manage') }}" class="btn btn-primary">Create Laporan</a>
             <div class="table-responsive mt-4">
                 <table class="table table-bordered">
                     <thead>
