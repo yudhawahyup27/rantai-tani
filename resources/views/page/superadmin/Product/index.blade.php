@@ -77,7 +77,7 @@
                                                 <td>{{ $sn->name }}</td>
                                                 <td>
                                                     @if($sn->image)
-                                                        <img src="{{ asset('storage/' . $sn->image) }}" alt="{{ $sn->name }}" width="100">
+                                                        <img src="{{ asset('/storage/app/public/' . $sn->image) }}" alt="{{ $sn->name }}" width="100">
                                                     @else
                                                         <span class="text-muted">No Image</span>
                                                     @endif
@@ -101,6 +101,9 @@
                                             </tr>
                                         @endforeach
                                     @endif
+                                      <div class="mt-3 d-flex justify-content-center">
+                {{ $data->appends(request()->query())->links() }}
+            </div>
                                 </tbody>
                             </table>
                         </div>
@@ -108,9 +111,7 @@
                 </div>
             @endforeach
 
-            <div class="mt-3 d-flex justify-content-center">
-                {{ $data->appends(request()->query())->links() }}
-            </div>
+
         </div>
     </div>
 </div>
