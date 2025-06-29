@@ -14,7 +14,8 @@
   <style>
      .sticky-column {
         position: sticky;
-     
+        background-color: white;
+        /* optional: border-right: 1px solid #dee2e6; */
     }
   </style>
   <!--     Fonts and icons     -->
