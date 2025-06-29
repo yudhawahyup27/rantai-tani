@@ -11,7 +11,7 @@
                     <thead>
                         <tr>
                             <th>No</th>
-                            <th class="sticky-colum">Product</th>
+                            <th class="sticky-column" style="left: 0; z-index: 2;">Product</th>
                             <th>Harga Sebelum</th>
                             <th>Harga Terbaru</th>
                             <th>Status</th>
@@ -22,7 +22,7 @@
                         @forelse($data as $d)
                         <tr class="text-center">
                             <td>{{ $loop->iteration }}</td>
-                            <td class="sticky-colum">{{ $d->product->name }}</td>
+                            <td class="sticky-column" style="left: 0; z-index: 2;">{{ $d->product->name }}</td>
                             <td>Rp {{ $d->old_price_sell }}</td>
                             <td>Rp {{ $d->new_price_sell }}</td>
                             @if($d->new_price_sell > $d->old_price_sell)
