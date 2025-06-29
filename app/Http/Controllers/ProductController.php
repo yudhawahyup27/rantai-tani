@@ -51,7 +51,7 @@ class ProductController extends Controller
     $titipanData->appends($request->except('titipan_page'));
     $beliData->appends($request->except('beli_page'));
 
-    return view('page.superladmin.Product.index', compact('titipanData', 'beliData', 'activeTab'));
+    return view('page.superadmin.Product.index', compact('titipanData', 'beliData', 'activeTab'));
 }
 
     public function manage($id = null){
