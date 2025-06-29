@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Investor;
+use App\Models\investor;
 use App\Models\Mastersaham;
 use App\Models\Takeover;
 use App\Models\User;
