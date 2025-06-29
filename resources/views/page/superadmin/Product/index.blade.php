@@ -101,11 +101,16 @@
                                             </tr>
                                         @endforeach
                                     @endif
-                                      <div class="mt-3 d-flex justify-content-center">
-                {{ $data->appends(request()->query())->links() }}
-            </div>
-                                </tbody>
+
+
                             </table>
+                                      <div class="mt-4">
+    <nav aria-label="Page navigation">
+        <ul class="pagination justify-content-center">
+            {!! $data->appends(request()->query())->links() !!}
+        </ul>
+    </nav>
+</div>
                         </div>
                     </div>
                 </div>
