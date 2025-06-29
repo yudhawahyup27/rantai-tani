@@ -24,38 +24,40 @@
             <canvas id="shiftChart" height="100"></canvas>
 
             {{-- Table --}}
-            <table class="table table-bordered mt-4">
-                <thead>
-                    <tr>
-                        <th>Tanggal</th>
-                        <th>Shift</th>
-                        <th>Produk</th>
-                        <th>Stok Awal</th>
-                        <th>Stock Awal Akumulasi</th>
-                        <th>Barang Terjual</th>
-                        <th>Terjual Akumulasi</th>
-                        <th>Stok Akhir</th>
-                        <th>Stock Terakhir Akumulasi</th>
-                        <th>Omset (Rp)</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach ($revenues as $rev)
-                    <tr>
-                        <td>{{ $rev->date }}</td>
-                        <td>{{ ucfirst($rev->shift) }}</td>
-                        <td>{{ $rev->product->name ?? '-' }}</td>
-                        <td>{{ $rev->stock_start }}</td>
-                        <td>{{ $rev->start_value }}</td>
-                        <td>{{ $rev->sold_quantity }}</td>
-                        <td>{{ $rev->stock_value }}</td>
-                        <td>{{ $rev->stock_end }}</td>
-                        <td>{{ $rev->end_value }}</td>
-                        <td>{{ number_format($rev->revenue, 0, ',', '.') }}</td>
-                    </tr>
-                    @endforeach
-                </tbody>
-            </table>
+            <div class="table-responsive">
+                <table class="table mt-4">
+                    <thead>
+                        <tr>
+                            <th>Tanggal</th>
+                            <th>Shift</th>
+                            <th>Produk</th>
+                            <th>Stok Awal</th>
+                            <th>Stock Awal Akumulasi</th>
+                            <th>Barang Terjual</th>
+                            <th>Terjual Akumulasi</th>
+                            <th>Stok Akhir</th>
+                            <th>Stock Terakhir Akumulasi</th>
+                            <th>Omset (Rp)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach ($revenues as $rev)
+                        <tr>
+                            <td>{{ $rev->date }}</td>
+                            <td>{{ ucfirst($rev->shift) }}</td>
+                            <td>{{ $rev->product->name ?? '-' }}</td>
+                            <td>{{ $rev->stock_start }}</td>
+                            <td>{{ $rev->start_value }}</td>
+                            <td>{{ $rev->sold_quantity }}</td>
+                            <td>{{ $rev->stock_value }}</td>
+                            <td>{{ $rev->stock_end }}</td>
+                            <td>{{ $rev->end_value }}</td>
+                            <td>{{ number_format($rev->revenue, 0, ',', '.') }}</td>
+                        </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 </div>
