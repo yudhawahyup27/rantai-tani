@@ -22,7 +22,6 @@
             <div class="d-flex flex-column flex-md-row">
                 <form method="GET" action="{{ route('admin.product') }}" class="mb-2 me-2">
                     <div class="d-flex">
-
                         <input style="width: 200px;" type="text" name="search" class="form-control me-2" placeholder="Cari..." value="{{ request('search') }}">
                         <select name="per_page" class="form-select me-2" onchange="this.form.submit()">
                             <option value="5" {{ request('per_page') == 5 ? 'selected' : '' }}>5</option>
@@ -38,130 +37,279 @@
                 <a href="{{ route('admin.product.manage') }}" class="btn btn-primary">Tambah Product</a>
             </div>
         </div>
+
         <div class="card-body px-0 pt-0 pb-2">
-            @php
-            $groupedProducts = $data->groupBy('category');
-            @endphp
+            <!-- Tab Navigation -->
+            <ul class="nav nav-tabs" id="productTab" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active" id="beli-tab" data-bs-toggle="tab" data-bs-target="#beli" type="button" role="tab" aria-controls="beli" aria-selected="true">
+                        Product Beli ({{ $dataBeli->total() }})
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="titipan-tab" data-bs-toggle="tab" data-bs-target="#titipan" type="button" role="tab" aria-controls="titipan" aria-selected="false">
+                        Product Titipan ({{ $dataTitipan->total() }})
+                    </button>
+                </li>
+            </ul>
 
-            @foreach($groupedProducts as $category => $products)
-            <div class="card">
-                <div class="card-header bg-secondary text-white">
-                    <h6 class="mb-0 text-uppercase">{{ $category ?? 'Tanpa Category' }}</h6>
-                </div>
-                <div class="card-body">
-                    <div class="table-responsive p-0">
-                        <table class="table align-items-center mb-0">
-                            <thead>
-                                <tr class="text-center">
-                                    <th>No</th>
-                                    <th>Name</th>
-                                    <th>Image</th>
-                                    <th>Price Buy</th>
-                                    <th>Price Sell</th>
-                                    <th>Category</th>
-                                    <th>Satuan</th>
-                                    <th>Laba</th>
-                                    <th>Di Update</th>
-                                    <th>Aksi</th>
-                                </tr>
-                            </thead>
-                            <tbody>
+            <!-- Tab Content -->
+            <div class="tab-content" id="productTabContent">
+                <!-- Tab Beli -->
+                <div class="tab-pane fade show active" id="beli" role="tabpanel" aria-labelledby="beli-tab">
+                    @php
+                    $groupedBeli = $dataBeli->groupBy('category');
+                    @endphp
 
-                                @if (count($products) == 0)
-                                <tr>
-                                    <td colspan="10" class="text-center">Tidak ada data</td>
-                                </tr>
-                                @else
-                                @foreach ($products as $sn)
-
-                                <tr class="text-center">
-                                    <td>{{ $loop->iteration }}</td>
-                                    <td>{{ $sn->name }}</td>
-                                    <td>
-                                        @if($sn->image)
-                                            <img src="{{ asset('storage/' . $sn->image) }}" alt="{{ $sn->name }}" width="100">
+                    @foreach($groupedBeli as $category => $products)
+                    <div class="card mt-3">
+                        <div class="card-header bg-primary text-white">
+                            <h6 class="mb-0 text-uppercase">{{ $category ?? 'Tanpa Category' }} - BELI</h6>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive p-0">
+                                <table class="table align-items-center mb-0">
+                                    <thead>
+                                        <tr class="text-center">
+                                            <th>No</th>
+                                            <th>Name</th>
+                                            <th>Image</th>
+                                            <th>Price Buy</th>
+                                            <th>Price Sell</th>
+                                            <th>Category</th>
+                                            <th>Satuan</th>
+                                            <th>Laba</th>
+                                            <th>Di Update</th>
+                                            <th>Aksi</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @if (count($products) == 0)
+                                        <tr>
+                                            <td colspan="10" class="text-center">Tidak ada data</td>
+                                        </tr>
                                         @else
-                                            <span class="text-muted">No Image</span>
+                                        @foreach ($products as $sn)
+                                        <tr class="text-center">
+                                            <td>{{ (($dataBeli->currentPage() - 1) * $dataBeli->perPage()) + $loop->iteration }}</td>
+                                            <td>{{ $sn->name }}</td>
+                                            <td>
+                                                @if($sn->image)
+                                                    <img src="{{ asset('storage/' . $sn->image) }}" alt="{{ $sn->name }}" width="100">
+                                                @else
+                                                    <span class="text-muted">No Image</span>
+                                                @endif
+                                            </td>
+                                            <td>Rp. {{ number_format($sn->price, 0, ',', '.') }}</td>
+                                            <td>Rp. {{ number_format($sn->price_sell, 0, ',', '.') }}</td>
+                                            <td>{{ $sn->category ?? '-' }}</td>
+                                            <td>{{ $sn->satuan->nama_satuan ?? '-' }}</td>
+                                            <td>Rp. {{ number_format($sn->laba, 0, ',', '.') }}</td>
+                                            <td>{{ $sn->updated_at ? $sn->updated_at->format('d-m-Y H:i') : '-' }}</td>
+                                            <td>
+                                                <div class="d-flex justify-content-center gap-2">
+                                                    <a href="{{ route('admin.product.manage', $sn->id) }}" class="btn btn-warning btn-sm">Edit</a>
+                                                    <form action="{{ route('admin.product.delete', $sn->id) }}" method="POST" class="d-inline">
+                                                        @csrf
+                                                        @method('DELETE')
+                                                        <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Yakin ingin menghapus?')">Hapus</button>
+                                                    </form>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        @endforeach
                                         @endif
-                                    </td>
-                                    <td>Rp. {{ number_format($sn->price, 0, ',', '.') }}</td>
-                                    <td>Rp. {{ number_format($sn->price_sell, 0, ',', '.') }}</td>
-                                    <td>{{ $sn->category ?? '-' }}</td>
-                                    <td>{{ $sn->satuan->nama_satuan ?? '-' }}</td>
-                                    <td>Rp. {{ number_format($sn->laba, 0, ',', '.') }}</td>
-                                    <td>{{ $sn->updated_at ? $sn->updated_at->format('d-m-Y H:i') : '-' }}</td>
-                                    <td>
-                                        <div class="d-flex justify-content-center gap-2">
-                                            <a href="{{ route('admin.product.manage', $sn->id) }}" class="btn btn-warning btn-sm">Edit</a>
-                                            <form action="{{ route('admin.product.delete', $sn->id) }}" method="POST" class="d-inline">
-                                                @csrf
-                                                @method('DELETE')
-                                                <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Yakin ingin menghapus?')">Hapus</button>
-                                            </form>
-                                        </div>
-                                    </td>
-                                </tr>
-                                @endforeach
-                                @endif
-                            </tbody>
-                        </table>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
                     </div>
+                    @endforeach
+
+                    <!-- Pagination untuk Beli -->
+                    @if($dataBeli->hasPages())
+                    <div class="d-flex justify-content-center mt-4">
+                        <nav aria-label="Page navigation Beli">
+                            <ul class="pagination">
+                                @if ($dataBeli->onFirstPage())
+                                    <li class="page-item disabled">
+                                        <span class="page-link">Previous</span>
+                                    </li>
+                                @else
+                                    <li class="page-item">
+                                        <a class="page-link" href="{{ $dataBeli->appends(array_merge(request()->input(), ['tab' => 'beli']))->previousPageUrl() }}">Previous</a>
+                                    </li>
+                                @endif
+
+                                @foreach ($dataBeli->getUrlRange(1, $dataBeli->lastPage()) as $page => $url)
+                                    @if ($page == $dataBeli->currentPage())
+                                        <li class="page-item active">
+                                            <span class="page-link">{{ $page }}</span>
+                                        </li>
+                                    @else
+                                        <li class="page-item">
+                                            <a class="page-link" href="{{ $dataBeli->appends(array_merge(request()->input(), ['tab' => 'beli']))->url($page) }}">{{ $page }}</a>
+                                        </li>
+                                    @endif
+                                @endforeach
+
+                                @if ($dataBeli->hasMorePages())
+                                    <li class="page-item">
+                                        <a class="page-link" href="{{ $dataBeli->appends(array_merge(request()->input(), ['tab' => 'beli']))->nextPageUrl() }}">Next</a>
+                                    </li>
+                                @else
+                                    <li class="page-item disabled">
+                                        <span class="page-link">Next</span>
+                                    </li>
+                                @endif
+                            </ul>
+                        </nav>
+                    </div>
+
+                    <div class="text-center mt-2">
+                        <small class="text-muted">
+                            Menampilkan {{ $dataBeli->firstItem() }} sampai {{ $dataBeli->lastItem() }} dari {{ $dataBeli->total() }} hasil (Beli)
+                        </small>
+                    </div>
+                    @endif
+                </div>
+
+                <!-- Tab Titipan -->
+                <div class="tab-pane fade" id="titipan" role="tabpanel" aria-labelledby="titipan-tab">
+                    @php
+                    $groupedTitipan = $dataTitipan->groupBy('category');
+                    @endphp
+
+                    @foreach($groupedTitipan as $category => $products)
+                    <div class="card mt-3">
+                        <div class="card-header bg-success text-white">
+                            <h6 class="mb-0 text-uppercase">{{ $category ?? 'Tanpa Category' }} - TITIPAN</h6>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive p-0">
+                                <table class="table align-items-center mb-0">
+                                    <thead>
+                                        <tr class="text-center">
+                                            <th>No</th>
+                                            <th>Name</th>
+                                            <th>Image</th>
+                                            <th>Price Buy</th>
+                                            <th>Price Sell</th>
+                                            <th>Category</th>
+                                            <th>Satuan</th>
+                                            <th>Laba</th>
+                                            <th>Di Update</th>
+                                            <th>Aksi</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @if (count($products) == 0)
+                                        <tr>
+                                            <td colspan="10" class="text-center">Tidak ada data</td>
+                                        </tr>
+                                        @else
+                                        @foreach ($products as $sn)
+                                        <tr class="text-center">
+                                            <td>{{ (($dataTitipan->currentPage() - 1) * $dataTitipan->perPage()) + $loop->iteration }}</td>
+                                            <td>{{ $sn->name }}</td>
+                                            <td>
+                                                @if($sn->image)
+                                                    <img src="{{ asset('storage/' . $sn->image) }}" alt="{{ $sn->name }}" width="100">
+                                                @else
+                                                    <span class="text-muted">No Image</span>
+                                                @endif
+                                            </td>
+                                            <td>Rp. {{ number_format($sn->price, 0, ',', '.') }}</td>
+                                            <td>Rp. {{ number_format($sn->price_sell, 0, ',', '.') }}</td>
+                                            <td>{{ $sn->category ?? '-' }}</td>
+                                            <td>{{ $sn->satuan->nama_satuan ?? '-' }}</td>
+                                            <td>Rp. {{ number_format($sn->laba, 0, ',', '.') }}</td>
+                                            <td>{{ $sn->updated_at ? $sn->updated_at->format('d-m-Y H:i') : '-' }}</td>
+                                            <td>
+                                                <div class="d-flex justify-content-center gap-2">
+                                                    <a href="{{ route('admin.product.manage', $sn->id) }}" class="btn btn-warning btn-sm">Edit</a>
+                                                    <form action="{{ route('admin.product.delete', $sn->id) }}" method="POST" class="d-inline">
+                                                        @csrf
+                                                        @method('DELETE')
+                                                        <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Yakin ingin menghapus?')">Hapus</button>
+                                                    </form>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        @endforeach
+                                        @endif
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    @endforeach
+
+                    <!-- Pagination untuk Titipan -->
+                    @if($dataTitipan->hasPages())
+                    <div class="d-flex justify-content-center mt-4">
+                        <nav aria-label="Page navigation Titipan">
+                            <ul class="pagination">
+                                @if ($dataTitipan->onFirstPage())
+                                    <li class="page-item disabled">
+                                        <span class="page-link">Previous</span>
+                                    </li>
+                                @else
+                                    <li class="page-item">
+                                        <a class="page-link" href="{{ $dataTitipan->appends(array_merge(request()->input(), ['tab' => 'titipan']))->previousPageUrl() }}">Previous</a>
+                                    </li>
+                                @endif
+
+                                @foreach ($dataTitipan->getUrlRange(1, $dataTitipan->lastPage()) as $page => $url)
+                                    @if ($page == $dataTitipan->currentPage())
+                                        <li class="page-item active">
+                                            <span class="page-link">{{ $page }}</span>
+                                        </li>
+                                    @else
+                                        <li class="page-item">
+                                            <a class="page-link" href="{{ $dataTitipan->appends(array_merge(request()->input(), ['tab' => 'titipan']))->url($page) }}">{{ $page }}</a>
+                                        </li>
+                                    @endif
+                                @endforeach
+
+                                @if ($dataTitipan->hasMorePages())
+                                    <li class="page-item">
+                                        <a class="page-link" href="{{ $dataTitipan->appends(array_merge(request()->input(), ['tab' => 'titipan']))->nextPageUrl() }}">Next</a>
+                                    </li>
+                                @else
+                                    <li class="page-item disabled">
+                                        <span class="page-link">Next</span>
+                                    </li>
+                                @endif
+                            </ul>
+                        </nav>
+                    </div>
+
+                    <div class="text-center mt-2">
+                        <small class="text-muted">
+                            Menampilkan {{ $dataTitipan->firstItem() }} sampai {{ $dataTitipan->lastItem() }} dari {{ $dataTitipan->total() }} hasil (Titipan)
+                        </small>
+                    </div>
+                    @endif
                 </div>
             </div>
-
-
-            @endforeach
-
-            <!-- Pagination -->
-            <div class="d-flex justify-content-center mt-4">
-                <nav aria-label="Page navigation">
-                    <ul class="pagination">
-                        {{-- Previous Page Link --}}
-                        @if ($data->onFirstPage())
-                            <li class="page-item disabled">
-                                <span class="page-link">Previous</span>
-                            </li>
-                        @else
-                            <li class="page-item">
-                                <a class="page-link" href="{{ $data->appends(request()->input())->previousPageUrl() }}">Previous</a>
-                            </li>
-                        @endif
-
-                        {{-- Pagination Elements --}}
-                        @foreach ($data->getUrlRange(1, $data->lastPage()) as $page => $url)
-                            @if ($page == $data->currentPage())
-                                <li class="page-item active">
-                                    <span class="page-link">{{ $page }}</span>
-                                </li>
-                            @else
-                                <li class="page-item">
-                                    <a class="page-link" href="{{ $data->appends(request()->input())->url($page) }}">{{ $page }}</a>
-                                </li>
-                            @endif
-                        @endforeach
-
-                        {{-- Next Page Link --}}
-                        @if ($data->hasMorePages())
-                            <li class="page-item">
-                                <a class="page-link" href="{{ $data->appends(request()->input())->nextPageUrl() }}">Next</a>
-                            </li>
-                        @else
-                            <li class="page-item disabled">
-                                <span class="page-link">Next</span>
-                            </li>
-                        @endif
-                    </ul>
-                </nav>
-            </div>
-
-            <!-- Pagination Info -->
-            <div class="text-center mt-2">
-                <small class="text-muted">
-                    Menampilkan {{ $data->firstItem() }} sampai {{ $data->lastItem() }} dari {{ $data->total() }} hasil
-                </small>
-            </div>
-
         </div>
-      </div>
+    </div>
 </div>
+
+<script>
+// Mengatur tab aktif berdasarkan parameter URL
+document.addEventListener('DOMContentLoaded', function() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const activeTab = urlParams.get('tab');
+
+    if (activeTab === 'titipan') {
+        document.getElementById('beli-tab').classList.remove('active');
+        document.getElementById('titipan-tab').classList.add('active');
+        document.getElementById('beli').classList.remove('show', 'active');
+        document.getElementById('titipan').classList.add('show', 'active');
+    }
+});
+</script>
+
 @endsection

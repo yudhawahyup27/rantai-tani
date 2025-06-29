@@ -15,9 +15,11 @@ class ProductController extends Controller
   public function index(Request $request){
     $search = $request->input('search');
     $sort = $request->input('sort', 'asc');
-    $perPage = $request->input('per_page', 5); // Perbaikan dari 'perpage' ke 'per_page'
+    $perPage = $request->input('per_page', 5);
 
-    $data = Product::with('satuan')
+    // Query untuk Product Beli
+    $dataBeli = Product::with('satuan')
+        ->where('jenis', 'beli') // Asumsi ada field 'jenis' untuk membedakan
         ->where(function ($query) use ($search) {
             if ($search) {
                 $query->where('name', 'like', '%' . $search . '%')
@@ -26,9 +28,22 @@ class ProductController extends Controller
             }
         })
         ->orderBy('created_at', $sort)
-        ->paginate($perPage);
+        ->paginate($perPage, ['*'], 'beli_page');
 
-    return view('page.superadmin.Product.index', compact('data'));
+    // Query untuk Product Titipan
+    $dataTitipan = Product::with('satuan')
+        ->where('jenis', 'titipan') // Asumsi ada field 'type' untuk membedakan
+        ->where(function ($query) use ($search) {
+            if ($search) {
+                $query->where('name', 'like', '%' . $search . '%')
+                      ->orWhere('price', 'like', '%' . $search . '%')
+                      ->orWhere('category', 'like', '%' . $search . '%');
+            }
+        })
+        ->orderBy('created_at', $sort)
+        ->paginate($perPage, ['*'], 'titipan_page');
+
+    return view('page.superadmin.Product.index', compact('dataBeli', 'dataTitipan'));
 }
 
     public function manage($id = null){
