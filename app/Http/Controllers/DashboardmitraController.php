@@ -8,7 +8,7 @@ use Illuminate\Http\Request;
 class DashboardmitraController extends Controller
 {
     public function index() {
-    $data = ProductPriceHistory::with('product')->latest()->paginate(6);
+    $data = ProductPriceHistory::with('product')->latest()->paginate(6)->take(30)->;
     return view("page.mitra.index", compact('data'));
 }
 
