@@ -12,23 +12,25 @@ use App\Notifications\ProductPriceChanged;
 
 class ProductController extends Controller
 {
-  public function index(Request $request)
+public function index(Request $request)
 {
-    $perPage = $request->input('perpage', 10);
-    $sort = $request->input('sort', 'asc');
     $search = $request->input('search');
+    $perPage = $request->input('perpage', 5);
+    $sort = $request->input('sort', 'asc');
 
-    // Produk beli
     $productsBuy = Product::where('jenis', 'beli')
-        ->when($search, fn($q) => $q->where('name', 'like', "%$search%"))
+        ->when($search, function ($query, $search) {
+            return $query->where('name', 'like', "%{$search}%");
+        })
         ->orderBy('name', $sort)
-        ->paginate($perPage, ['*'], 'buy_page');
+        ->paginate($perPage, ['*'], 'beli');
 
-    // Produk titipan
     $productsTitip = Product::where('jenis', 'titip')
-        ->when($search, fn($q) => $q->where('name', 'like', "%$search%"))
+        ->when($search, function ($query, $search) {
+            return $query->where('name', 'like', "%{$search}%");
+        })
         ->orderBy('name', $sort)
-        ->paginate($perPage, ['*'], 'titip_page');
+        ->paginate($perPage, ['*'], 'titip');
 
     return view('page.superadmin.Product.index', compact('productsBuy', 'productsTitip'));
 }
