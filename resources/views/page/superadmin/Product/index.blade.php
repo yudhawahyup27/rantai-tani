@@ -95,7 +95,7 @@
                                             <td>{{ $sn->name }}</td>
                                             <td>
                                                 @if($sn->image)
-                                                    <img src="{{ asset('storage/' . $sn->image) }}" alt="{{ $sn->name }}" width="100">
+                                                    <img src="{{ asset('/storage/app/public/' . $sn->image) }}" alt="{{ $sn->name }}" width="100">
                                                 @else
                                                     <span class="text-muted">No Image</span>
                                                 @endif
@@ -214,7 +214,7 @@
                                             <td>{{ $sn->name }}</td>
                                             <td>
                                                 @if($sn->image)
-                                                    <img src="{{ asset('storage/' . $sn->image) }}" alt="{{ $sn->name }}" width="100">
+                                                    <img src="{{ asset('/storage/app/public/' . $sn->image) }}" alt="{{ $sn->name }}" width="100">
                                                 @else
                                                     <span class="text-muted">No Image</span>
                                                 @endif
