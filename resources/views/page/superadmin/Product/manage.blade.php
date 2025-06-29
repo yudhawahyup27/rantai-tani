@@ -54,8 +54,8 @@
                   <label for="category">Category</label>
                   <select class="form-control" name="category" id="category" required>
                     <option value=""  disabled selected>Pilih Category</option>
-                      <option value="titipan" {{ old('category', $data->category ?? '') == 'titipan' ? 'selected' : '' }}>Sayur Titipan</option>
-                      <option value="beli" {{ old('category', $data->category ?? '') == 'beli' ? 'selected' : '' }}>Sayur Beli</option>
+                      <option value="titipan" {{ old('category', $data->category ?? '') == 'titipan' ? 'selected' : '' }}> Titipan</option>
+                      <option value="beli" {{ old('category', $data->category ?? '') == 'beli' ? 'selected' : '' }}> Beli</option>
                   </select>
               </div>
               <div class="mb-3">
