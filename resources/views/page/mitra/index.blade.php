@@ -11,7 +11,7 @@
                     <thead>
                         <tr>
                             <th>No</th>
-                            <th class="sticky-column" style="left: 0; z-index: 2;">Product</th>
+                            <th class="sticky-column bg-white" style="left: 0; z-index: 0;">Product</th>
                             <th>Harga Sebelum</th>
                             <th>Harga Terbaru</th>
                             <th>Status</th>
@@ -22,7 +22,7 @@
                         @forelse($data as $d)
                         <tr class="text-center">
                             <td>{{ $loop->iteration }}</td>
-                            <td class="sticky-column" style="left: 0; z-index: 2;">{{ $d->product->name }}</td>
+                            <td class="sticky-column bg-white" style="left: 0; z-index: 0;">{{ $d->product->name }}</td>
                             <td>Rp {{ $d->old_price_sell }}</td>
                             <td>Rp {{ $d->new_price_sell }}</td>
                             @if($d->new_price_sell > $d->old_price_sell)
@@ -41,6 +41,44 @@
                         @endforelse
                     </tbody>
                 </table>
+                                      <div class="d-flex justify-content-center mt-4">
+    <nav aria-label="Pagination">
+        <ul class="pagination pagination-sm">
+            {{-- Tombol Previous --}}
+            @if ($data->onFirstPage())
+                <li class="page-item disabled">
+                    <span class="page-link"><i class="ni ni-bold-left"></i></span>
+                </li>
+            @else
+                <li class="page-item">
+                    <a class="page-link" href="{{ $data->previousPageUrl() }}" aria-label="Previous">
+                        <i class="ni ni-bold-left"></i>
+                    </a>
+                </li>
+            @endif
+
+            {{-- Tombol Nomor Halaman --}}
+            @for ($i = 1; $i <= $data->lastPage(); $i++)
+                <li class="page-item {{ $data->currentPage() == $i ? 'active' : '' }}">
+                    <a class="page-link" href="{{ $data->url($i) }}">{{ $i }}</a>
+                </li>
+            @endfor
+
+            {{-- Tombol Next --}}
+            @if ($data->hasMorePages())
+                <li class="page-item">
+                    <a class="page-link" href="{{ $data->nextPageUrl() }}" aria-label="Next">
+                        <i class="ni ni-bold-right"></i>
+                    </a>
+                </li>
+            @else
+                <li class="page-item disabled">
+                    <span class="page-link"><i class="ni ni-bold-right"></i></span>
+                </li>
+            @endif
+        </ul>
+    </nav>
+</div>
             </div>
 
         </div>
