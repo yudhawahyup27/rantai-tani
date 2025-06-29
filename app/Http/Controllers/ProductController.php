@@ -19,13 +19,13 @@ class ProductController extends Controller
     $search = $request->input('search');
 
     // Produk beli
-    $productsBuy = Product::where('type', 'beli')
+    $productsBuy = Product::where('jenis', 'beli')
         ->when($search, fn($q) => $q->where('name', 'like', "%$search%"))
         ->orderBy('name', $sort)
         ->paginate($perPage, ['*'], 'buy_page');
 
     // Produk titipan
-    $productsTitip = Product::where('type', 'titip')
+    $productsTitip = Product::where('jenis', 'titip')
         ->when($search, fn($q) => $q->where('name', 'like', "%$search%"))
         ->orderBy('name', $sort)
         ->paginate($perPage, ['*'], 'titip_page');
