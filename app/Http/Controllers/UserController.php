@@ -15,7 +15,7 @@ class UserController extends Controller
     // Menampilkan daftar user
     public function userpage() {
         $users = User::with(['role', 'userTossa', 'workShift'])->get();
-        return view('page.superadmin.User.index', compact('users'));
+        return view('page.superadmin.user.index', compact('users'));
     }
 
     // Menampilkan form create/edit user
