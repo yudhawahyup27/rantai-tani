@@ -17,7 +17,7 @@ class TakeoverController extends Controller
 
        $nomerhp = User::where('id', 1)->value('telepon');
         $data = Takeover::with(['investor', 'fromUser', 'toUser', 'tossa'])->get();
-        return view('page.superadmin.investor.takeover.index', compact('data','nomerhp'));
+        return view('page.superadmin.Investor.takeover.index', compact('data','nomerhp'));
     }
 
     public function manage($id = null)
@@ -30,7 +30,7 @@ class TakeoverController extends Controller
         // Ambil user sebagai tujuan takeover
         $users = User::where('id_role', '3')->get();
 
-        return view('page.superadmin.investor.takeover.manage', compact('data', 'investors', 'users'));
+        return view('page.superadmin.Investor.takeover.manage', compact('data', 'investors', 'users'));
     }
 
     public function store(Request $request)
