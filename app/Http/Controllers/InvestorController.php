@@ -14,7 +14,7 @@ class InvestorController extends Controller
     public function index()
     {
         $data = investor::with(['user', 'tossa'])->get();
-        return view('page.superadmin.investor.index', compact('data'));
+        return view('page.superadmin.Investor.index', compact('data'));
     }
 
     // Menampilkan form tambah atau edit investor
@@ -39,7 +39,7 @@ class InvestorController extends Controller
             ];
         });
 
-        return view('page.superadmin.investor.manage', compact('data', 'user', 'tossa', 'devidens', 'tossaDetail'));
+        return view('page.superadmin.Investor.manage', compact('data', 'user', 'tossa', 'devidens', 'tossaDetail'));
     }
 
 
