@@ -27,7 +27,7 @@ class SupplyNetworkController extends Controller
     public function manage ($id= null){
         $data = $id ? Tossa::findOrFail($id) : new Tossa();
 
-        return view('page.superadmin.Supplynetworkmanage', compact('data'));
+        return view('page.superadmin.SupplyNetwork.manage', compact('data'));
     }
     public function store(Request $request){
         $request->validate([
