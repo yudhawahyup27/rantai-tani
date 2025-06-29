@@ -31,7 +31,7 @@
     @yield('content')
     @include('components.navigations.footer')
   </main>
-  @include('components.partials.fixed-plugin')
+  {{-- @include('components.partials.fixed-plugin') --}}
 
   <!--   Core JS Files   -->
 
