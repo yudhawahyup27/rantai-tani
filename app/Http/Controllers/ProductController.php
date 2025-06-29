@@ -12,21 +12,27 @@ use App\Notifications\ProductPriceChanged;
 
 class ProductController extends Controller
 {
-    public function index(Request $request){
-        $search = $request->input('search');
-        $sort = $request->input('sort', 'asc');
-        $perPage = $request->input('perpage', 5);
+  public function index(Request $request)
+{
+    $perPage = $request->input('perpage', 10);
+    $sort = $request->input('sort', 'asc');
+    $search = $request->input('search');
 
-        $data = Product::with('satuan')
-            ->where(function ($query) use ($search) {
-                $query->where('name', 'like', '%' . $search . '%')
-                      ->orWhere('price', 'like', '%' . $search . '%');
-            })
-            ->orderBy('created_at', $sort)
-            ->paginate($perPage);
+    // Produk beli
+    $productsBuy = Product::where('type', 'beli')
+        ->when($search, fn($q) => $q->where('name', 'like', "%$search%"))
+        ->orderBy('name', $sort)
+        ->paginate($perPage, ['*'], 'buy_page');
 
-        return view('page.superadmin.Product.index', compact('data'));
-    }
+    // Produk titipan
+    $productsTitip = Product::where('type', 'titip')
+        ->when($search, fn($q) => $q->where('name', 'like', "%$search%"))
+        ->orderBy('name', $sort)
+        ->paginate($perPage, ['*'], 'titip_page');
+
+    return view('admin.product.index', compact('productsBuy', 'productsTitip'));
+}
+
 
     public function manage($id = null){
         $data = $id ? Product::findOrFail($id) : new Product();
