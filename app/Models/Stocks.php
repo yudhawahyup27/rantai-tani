@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use App\Models\NewStock; // Perbaikan: Gunakan PascalCase yang konsisten
+
 
 class Stocks extends Model
 {
@@ -29,6 +29,6 @@ class Stocks extends Model
 
     public function newStock()
     {
-        return $this->hasMany(NewStock::class, 'stock_id'); // Pastikan menggunakan NewStock (PascalCase)
+        return $this->hasMany(newStock::class, 'stock_id'); // Pastikan menggunakan NewStock (PascalCase)
     }
 }
