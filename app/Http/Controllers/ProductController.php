@@ -15,43 +15,20 @@ class ProductController extends Controller
   public function index(Request $request){
     $search = $request->input('search');
     $sort = $request->input('sort', 'asc');
-    $perPage = $request->input('per_page', 5);
-    $activeTab = $request->input('tab', 'titipan'); // Default ke titipan
+    $perPage = $request->input('per_page', 5); // Perbaikan dari 'perpage' ke 'per_page'
 
-    // Base query
-    $baseQuery = Product::with('satuan');
+    $data = Product::with('satuan')
+        ->where(function ($query) use ($search) {
+            if ($search) {
+                $query->where('name', 'like', '%' . $search . '%')
+                      ->orWhere('price', 'like', '%' . $search . '%')
+                      ->orWhere('category', 'like', '%' . $search . '%');
+            }
+        })
+        ->orderBy('created_at', $sort)
+        ->paginate($perPage);
 
-    // Apply search filter
-    if ($search) {
-        $baseQuery->where(function ($q) use ($search) {
-            $q->where('name', 'like', '%' . $search . '%')
-              ->orWhere('price', 'like', '%' . $search . '%')
-              ->orWhere('category', 'like', '%' . $search . '%');
-        });
-    }
-
-    // Separate queries for each type
-    $titipanQuery = clone $baseQuery;
-    $beliQuery = clone $baseQuery;
-
-    // Filter by type
-    $titipanData = $titipanQuery
-        ->where('jenis', 'titipan')
-        ->orderBy('category', 'asc')
-        ->orderBy('name', $sort)
-        ->paginate($perPage, ['*'], 'titipan_page');
-
-    $beliData = $beliQuery
-        ->where('jenis', 'beli')
-        ->orderBy('category', 'asc')
-        ->orderBy('name', $sort)
-        ->paginate($perPage, ['*'], 'beli_page');
-
-    // Append query parameters to pagination links
-    $titipanData->appends($request->except('titipan_page'));
-    $beliData->appends($request->except('beli_page'));
-
-    return view('page.superadmin.Product.index', compact('titipanData', 'beliData', 'activeTab'));
+    return view('page.superadmin.Product.index', compact('data'));
 }
 
     public function manage($id = null){
