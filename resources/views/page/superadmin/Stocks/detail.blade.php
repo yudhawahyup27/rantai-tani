@@ -76,6 +76,9 @@
                                         @method('DELETE')
                                         <button type="submit" class="btn btn-sm btn-danger">Delete</button>
                                     </form>
+                                    <a href="{{ route('admin.stock.newStockHistory', $datas->id) }}" class="btn btn-info">
+    Lihat Riwayat Penambahan Stok
+</a>
                                 </td>
                             </tr>
                         @empty

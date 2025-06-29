@@ -63,17 +63,27 @@ class StockController extends Controller
                 ]
                 );
                $stock = Stocks::findOrFail($id);
-              $stock->quantity = request('quantity');
-               $stock->quantity += $request->input('quantity_new');
-               $stock->quantity_new=0;
-                  $stock->product_id = $request->input('product_id');
-    $stock->tossa_id = $request->input('tossa_id');
+            // Cek apakah ada quantity baru ditambahkan
+    $quantityNew = $request->input('quantity_new', 0);
+    if ($quantityNew > 0) {
+        // Tambahkan ke stock
+        $stock->quantity += $quantityNew;
 
+        // Simpan riwayat ke tabel new_stocks
+        \App\Models\NewStock::create([
+            'stock_id' => $stock->id,
+            'quantity_added' => $quantityNew,
+        ]);
+    }
+
+    // Update field lain
+    $stock->quantity_new = 0; // reset
+    $stock->product_id = $request->input('product_id');
+    $stock->tossa_id = $request->input('tossa_id');
     $stock->save();
 
     return redirect()->route('admin.stock')->with('success', 'Stok berhasil diperbarui.');
-
-            }
+}
 
             public function destroy (Request $request, $id)
             {
@@ -82,4 +92,12 @@ class StockController extends Controller
                 delete();
                 return redirect()->route('admin.stock')->with('success', 'Stok berhasil Dihapus.');
 }
+
+public function newStockHistory($stock_id)
+{
+    $stock = Stocks::with('product', 'tossa', 'newStock')->findOrFail($stock_id);
+
+    return view('page.superadmin.Stocks.newStockHistory', compact('stock'));
+}
+
 }

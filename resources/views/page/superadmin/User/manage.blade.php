@@ -21,6 +21,13 @@
                         <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
                 </div>
+                <div class="mb-3">
+                    <label for="telepon">Telepon</label>
+                    <input type="text" name="telepon" class="form-control @error('telepon') is-invalid @enderror" value="{{ old('telepon', $data->telepon) }}" required>
+                    @error('telepon')
+                        <div class="invalid-feedback">{{ $message }}</div>
+                    @enderror
+                </div>
 
                 <div class="mb-3">
                     <label for="password">Password {{ $data->id ? '(Kosongkan jika tidak diubah)' : '' }}</label>

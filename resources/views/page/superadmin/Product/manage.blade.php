@@ -28,6 +28,13 @@
                          value="{{ old('price', $data->price ?? '') }}" required>
                   @error('price') <div class="invalid-feedback">{{ $message }}</div> @enderror
               </div>
+            <div class="mb-3 d-none " id="pemilik-wrapper">
+            <label for="pemilik">Nama Pemilik Titipan</label>
+        <input type="text" name="pemilik" placeholder="Masukan nama pemilik titipan"
+           class="form-control @error('pemilik') is-invalid @enderror text-capitalize"
+           value="{{ old('pemilik', $data->pemilik ?? '') }}">
+    @error('pemilik') <div class="invalid-feedback">{{ $message }}</div> @enderror
+        </div>
               <div class="mb-3">
                   <label for="price_sell">Price Sell</label>
                   <input type="number" step="0.01" placeholder="Harga Jual" name="price_sell" class="form-control @error('price_sell') is-invalid @enderror"
@@ -49,6 +56,15 @@
                     <option value=""  disabled selected>Pilih Category</option>
                       <option value="titipan" {{ old('category', $data->category ?? '') == 'titipan' ? 'selected' : '' }}>Sayur Titipan</option>
                       <option value="beli" {{ old('category', $data->category ?? '') == 'beli' ? 'selected' : '' }}>Sayur Beli</option>
+                  </select>
+              </div>
+              <div class="mb-3">
+                  <label for="jenis">Jenis</label>
+                  <select class="form-control" name="jenis" id="jenis" required>
+                    <option value=""  disabled selected>Pilih jenis</option>
+                      <option value="sayur" {{ old('jenis', $data->jenis ?? '') == 'sayur' ? 'selected' : '' }}>Sayur</option>
+                      <option value="buah" {{ old('jenis', $data->jenis ?? '') == 'buah' ? 'selected' : '' }}>Buah</option>
+                      <option value="garingan" {{ old('jenis', $data->jenis ?? '') == 'garingan' ? 'selected' : '' }}>Garingan</option>
                   </select>
               </div>
 
@@ -92,6 +108,9 @@
     const priceInput = document.querySelector('input[name="price"]');
     const labaInput = document.querySelector('input[name="laba"]');
     const priceSellInput = document.querySelector('input[name="price_sell"]');
+    const categorySelect = document.querySelector('select[name="category"]')
+    const pemilik = document.getElementById('pemilik-wrapper')
+    const pemilikInput = pemilik.querySelector('input[name="pemilik"]')
 
     function calculatePriceSell() {
         const price = parseFloat(priceInput.value) || 0;
@@ -99,12 +118,29 @@
         priceSellInput.value = price + laba;
     }
 
+    const togglePemilik = () =>{
+        if (categorySelect.value === 'titipan') {
+            pemilik.classList.add('d-block')
+            pemilik.classList.remove('d-none')
+            pemilikInput.required
+        } else {
+            pemilik.classList.remove('d-block')
+            pemilik.classList.add('d-none')
+
+        }
+    }
+
+
+
+
     // Add event listeners
+    categorySelect.addEventListener('change', togglePemilik)
     priceInput.addEventListener('input', calculatePriceSell);
     labaInput.addEventListener('input', calculatePriceSell);
 
     // Calculate on page load for existing data
     calculatePriceSell();
+    togglePemilik();
 });
 </script>
 

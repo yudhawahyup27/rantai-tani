@@ -10,6 +10,23 @@
             </nav>
 
             <ul class="navbar-nav gap-3">
+                <li class="nav-item dropdown">
+    <a class="nav-link" data-toggle="dropdown" href="#">
+        🔔 <span class="badge badge-warning">{{ auth()->user()->unreadNotifications->count() }}</span>
+    </a>
+    <div class="dropdown-menu dropdown-menu-right">
+        @forelse(auth()->user()->unreadNotifications as $notif)
+            <a href="#" class="dropdown-item">
+                <strong>{{ $notif->data['title'] }}</strong><br>
+                <small>{{ $notif->data['message'] }}</small>
+                <br><small class="text-muted">{{ $notif->created_at->diffForHumans() }}</small>
+            </a>
+            <div class="dropdown-divider"></div>
+        @empty
+            <a class="dropdown-item text-center">Tidak ada notifikasi</a>
+        @endforelse
+    </div>
+</li>
                 <li class="nav-item d-flex align-items-center justify-content-center ">
                     <a href="javascript:;" class="nav-link text-white font-weight-bold px-0">
                         <i class="fa fa-user me-sm-1"></i>
@@ -26,6 +43,7 @@
                     </a>
                 </li>
             </ul>
+
         </div>
     </div>
 </nav>

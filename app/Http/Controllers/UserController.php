@@ -47,6 +47,7 @@ class UserController extends Controller
             'username' => $request->username,
             'password' => Hash::make($request->password),
             'id_tossa' => $request->id_tossa,
+            'telepon' => $request->telepon,
             'id_shift' => $request->id_shift,
             'id_role' => $request->id_role,
         ]);
@@ -76,6 +77,7 @@ class UserController extends Controller
 
         $user->update([
             'username' => $request->username,
+            'telepon' => $request->telepon,
             'id_tossa' => $request->id_tossa,
             'id_shift' => $request->id_shift,
             'id_role' => $request->id_role,

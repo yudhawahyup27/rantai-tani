@@ -38,7 +38,7 @@
                     @foreach($data as $data)
                     @php
                     $message = "Halo Admin, saya ingin membeli saham {$data->tossa->name} sebanyak {} lot ";
-                    $whatsappUrl = 'https://wa.me/6281234567890?text=' . urlencode($message);
+                    $whatsappUrl = 'https://wa.me/' . $nomerhp->telepon . '?text=' . urlencode($message);
                   @endphp
 
                     <tr>

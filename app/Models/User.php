@@ -42,9 +42,12 @@ class User extends Authenticatable
     /**
      * Relasi ke tabel Tossa
      */
-    public function userTossa()
+ public function userTossa()
     {
-        return $this->belongsTo(Tossa::class, 'id_tossa');
+        return $this->belongsTo(Tossa::class, 'id_tossa', 'id');
+        // Format: belongsTo(ModelClass, foreign_key, owner_key)
+        // foreign_key = kolom di tabel users (id_tossa)
+        // owner_key = kolom di tabel tossas (id)
     }
 
     /**

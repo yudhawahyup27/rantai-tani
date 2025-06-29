@@ -22,5 +22,10 @@ class Stocks extends Model
     public function tossa(){
         return $this->belongsTo(Tossa::class, 'tossa_id');
         }
+
+        public function newStock()
+{
+    return $this->hasMany(NewStock::class, 'stock_id');
+}
 }
 

@@ -6,7 +6,7 @@
             © <script>
               document.write(new Date().getFullYear())
             </script>,
-             
+
             <a href="/" class="font-weight-bold" target="_blank">Rantai Tani</a>
           </div>
         </div>

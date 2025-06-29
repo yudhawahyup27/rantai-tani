@@ -11,6 +11,7 @@ class SahamController extends Controller
     public function index()
     {
         $data = Mastersaham::all();
+      
         return view('page.superadmin.saham.index', compact('data'));
     }
 

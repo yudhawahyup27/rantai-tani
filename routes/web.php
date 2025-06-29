@@ -5,12 +5,17 @@ use App\Http\Controllers\ShiftController;
 use App\Http\Controllers\StockController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\DashboardadminCntroller;
 use App\Http\Controllers\Dashboardinvestor;
 use App\Http\Controllers\DashboardmitraController;
 use App\Http\Controllers\InvestorController;
+use App\Http\Controllers\LaporanController;
+use App\Http\Controllers\LaporanKeuanganMitra;
 use App\Http\Controllers\SahamController;
+use App\Http\Controllers\SewaController;
 use App\Http\Controllers\SupplyNetworkController;
 use App\Http\Controllers\TakeoverController;
+use App\Http\Controllers\TransaksiController;
 use App\Http\Controllers\UserController;
 /*
 |--------------------------------------------------------------------------
@@ -32,10 +37,7 @@ Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
 
 Route::middleware(['auth', 'role:administrator'])->prefix('dashboard/admin')->group(function () {
-    Route::get('/', function () {
-        return view('page.superadmin.index');
-    })->name('dashboard.administrator');
-
+    Route::get('/', [DashboardadminCntroller::class,'index'])->name('dashboard.administrator');
     // CRUD User (Satu halaman untuk Create & Edit)
         Route::prefix('/user')->group(function (){
             Route::get('/', [UserController::class, 'userpage'])->name('admin.user');
@@ -105,14 +107,46 @@ Route::middleware(['auth', 'role:administrator'])->prefix('dashboard/admin')->gr
         Route::get('/detail/{id}', [StockController::class, 'detail'])->name('admin.detail.stock');
         Route::get('/manage/{id?}', [StockController::class, 'manage'])->name('admin.stock.manage');
           Route::post('/store', [StockController::class, 'store'])->name('admin.stock.store');
-        Route::put('/update/{id}', [StockController::class, 'update'])->name('admin.stock.update');});
-    Route::delete('/delete/{id}', [StockController::class, 'destroy'])->name('admin.stock.destroy');
+        Route::put('/update/{id}', [StockController::class, 'update'])->name('admin.stock.update');
+        Route::delete('/delete/{id}', [StockController::class, 'destroy'])->name('admin.stock.destroy');
+       Route::get('/stock/{stock_id}/history', [StockController::class, 'newStockHistory'])->name('admin.stock.newStockHistory');
+    });
+
+    // Sewa
+
+    Route::prefix('/sewa')->group(function () {
+        Route::get('/', [SewaController::class,'index'])->name('admin.sewa.index');
+        Route::get('/manage/{id?}',[SewaController::class,'manage'])->name('admin.sewa.manage');
+         Route::post('/store', [SewaController::class, 'store'])->name('admin.sewa.store');
+        Route::put('/update/{id}', [SewaController::class, 'update'])->name('admin.sewa.update');
+        Route::delete('/delete/{id}', [SewaController::class, 'destroy'])->name('admin.sewa.destroy');
+    });
+
+
+      Route::prefix('/laporan')->group(function () {
+        Route::get('/', [LaporanController::class,'index'])->name('admin.laporan.index');
+         Route::get('/manage/{id?}',[LaporanController::class,'manage'])->name('admin.laporan.manage');
+          Route::post('/store', [LaporanController::class, 'store'])->name('admin.laporan.store');
+        Route::put('/update/{id}', [LaporanController::class, 'update'])->name('admin.laporan.update');
+    });
 });
 
-Route::middleware(['auth', 'role:mitra'])->group(function () {
-    Route::get('/dashboard/mitra', [DashboardmitraController::class,'index'])->name('dashboard.mitra');
-    
+Route::middleware(['auth', 'role:mitra'])->prefix('/dashboard/mitra')->group(function () {
+    Route::get('/', [DashboardmitraController::class,'index'])->name('dashboard.mitra');
+
+    Route::get('/transaksi', [TransaksiController::class,'index'])->name('dashboard.mitra.transaksi');
+    Route::get('/transaksi/history', [TransaksiController::class,'Omset'])->name('omset.index');
+    Route::post('/stok/{product}', [TransaksiController::class, 'store'])->name('mitra.stok.store');
+    Route::post('/simpan-omset', [TransaksiController::class, 'submitOmset'])->name('mitra.simpanOmset');
+
+    Route::prefix('/laporan')->group(function () {
+        Route::get('/', [LaporanKeuanganMitra::class,'index'])->name('mitra.laporan.index');
+        Route::get('/manage/{id?}', [LaporanKeuanganMitra::class,'manage'])->name('mitra.laporan.manage');
+        Route::post('/store', [LaporanKeuanganMitra::class, 'store'])->name('dashboard.mitra.laporan.store');
+        Route::put('/update/{id}', [LaporanKeuanganMitra::class, 'update'])->name('dashboard.mitra.laporan.update');
+    });
 });
+
 
 Route::middleware(['auth', 'role:investor'])->group(function () {
         Route::get('/dashboard/investor', [Dashboardinvestor::class, 'index'])->name('dashboard.investor');

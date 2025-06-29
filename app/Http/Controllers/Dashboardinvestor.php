@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\investor;
 use App\Models\Mastersaham;
+use App\Models\User;
 use Illuminate\Http\Request;
 
 class Dashboardinvestor extends Controller
@@ -71,7 +72,9 @@ class Dashboardinvestor extends Controller
 
     public function beli(){
         $data = Mastersaham::with('tossa')->get();
+        $nomerhp = User::where('id', 1)->first();
+        // dd($nomerhp);
 
-        return view('page.investor.beli-saham.index', compact('data'));
+        return view('page.investor.beli-saham.index', compact('data', 'nomerhp'));
     }
 }

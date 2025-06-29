@@ -91,6 +91,8 @@ use Illuminate\Support\Facades\Request;
                             </ul>
                         </div>
                     </li>
+
+
                     {{-- Menu lainnya (non-master) --}}
                     <li class="nav-item">
                             <a class="nav-link {{ Request::routeIs('admin.user') ? 'active' : '' }}" href="{{ route('admin.user') }}">
@@ -101,13 +103,22 @@ use Illuminate\Support\Facades\Request;
                             </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link {{ Request::routeIs('admin.investor') ? 'active' : '' }}" href="{{ route('admin.investor') }}">
-                            <div class="icon icon-shape icon-sm border-radius-md text-center me-2 d-flex align-items-center justify-content-center">
-                                <i class="ni ni-watch-time text-dark text-sm opacity-10"></i>
-                            </div>
-                            <span class="nav-link-text ">Manajemen Investor</span>
-                        </a>
+                            <a class="nav-link {{ Request::routeIs('admin.stock') ? 'active' : '' }}" href="{{ route('admin.stock') }}">
+                                <div class="icon icon-shape icon-sm border-radius-md text-center me-2 d-flex align-items-center justify-content-center">
+                                    <i class="ni ni-box-2 text-dark text-sm opacity-10"></i>
+                                </div>
+                                <span class="nav-link-text">Manajemen Stock</span>
+                            </a>
                     </li>
+                    <li class="nav-item">
+                            <a class="nav-link {{ Request::routeIs('admin.sewa.index') ? 'active' : '' }}" href="{{ route('admin.sewa.index') }}">
+                                <div class="icon icon-shape icon-sm border-radius-md text-center me-2 d-flex align-items-center justify-content-center">
+                                    <i class="ni ni-box-2 text-dark text-sm opacity-10"></i>
+                                </div>
+                                <span class="nav-link-text">Manajemen Sewa</span>
+                            </a>
+                    </li>
+
                 @endif
 
                 @if(auth()->user()->hasRole('mitra'))
@@ -117,6 +128,22 @@ use Illuminate\Support\Facades\Request;
                                 <i class="ni ni-briefcase-24 text-dark text-sm opacity-10"></i>
                             </div>
                             <span class="nav-link-text ms-1">Dashboard Mitra</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {{ Request::routeIs('dashboard.mitra.transaksi') ? 'active' : '' }}" href="{{ route('dashboard.mitra.transaksi') }}">
+                            <div class="icon icon-shape icon-sm border-radius-md text-center me-2 d-flex align-items-center justify-content-center">
+                                <i class="ni ni-briefcase-24 text-dark text-sm opacity-10"></i>
+                            </div>
+                            <span class="nav-link-text ms-1">Update Stock Transaksi</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {{ Request::routeIs('dashboard.mitra.laporan') ? 'active' : '' }}" href="{{ route('dashboard.mitra.laporan') }}">
+                            <div class="icon icon-shape icon-sm border-radius-md text-center me-2 d-flex align-items-center justify-content-center">
+                                <i class="ni ni-briefcase-24 text-dark text-sm opacity-10"></i>
+                            </div>
+                            <span class="nav-link-text ms-1">Laporan Lengkap</span>
                         </a>
                     </li>
                 @endif
