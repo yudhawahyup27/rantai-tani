@@ -85,7 +85,7 @@ public function store(Request $request)
         'note' => $request->note,
     ]);
 
-    return redirect()->route('dashboard.mitra.laporan')->with('success', 'Laporan berhasil disimpan.');
+    return redirect()->route('mitra.laporan.index')->with('success', 'Laporan berhasil disimpan.');
 }
 
 
@@ -144,7 +144,7 @@ public function update(Request $request, $id)
         'note' => $request->note,
     ]);
 
-    return redirect()->route('dashboard.mitra.laporan')->with('success', 'Laporan berhasil diperbarui.');
+    return redirect()->route('mitra.laporan.index')->with('success', 'Laporan berhasil diperbarui.');
 }
 
 
