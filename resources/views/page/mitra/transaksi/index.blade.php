@@ -156,6 +156,7 @@
             {{-- Tombol Simpan Omset --}}
             <form action="{{ route('mitra.simpanOmset') }}" method="POST" class="mt-4 text-center">
                 @csrf
+                <small><span class="text-red">*</span>Simpan Seluruh Stock Hari ini Terlebih dahulu sebelum Simpan Omset Hari Ini</small>
                 <button type="submit" class="btn btn-warning">
                     <i class="bi bi-save"></i> Simpan Omset Hari Ini
                 </button>
