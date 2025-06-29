@@ -9,39 +9,39 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use App\Notifications\ProductPriceChanged;
-use Illuminate\Support\Facades\Log;
 
 class ProductController extends Controller
 {
-public function index(Request $request)
+  public function index(Request $request)
 {
-    $perPage = $request->input('perpage', 10);
-    $sort = $request->input('sort', 'asc');
     $search = $request->input('search');
+    $sort = $request->input('sort', 'asc');
+    $perPage = $request->input('perpage', 5);
 
-    // Query untuk Produk Beli - menggunakan scope atau langsung where
-    $productsBuyQuery = Product::where('jenis', 'beli') // atau Product::beli()
-        ->when($search, function ($query, $search) {
-            $query->where('name', 'like', "%$search%");
-        })
-        ->orderBy('name', $sort);
+    // Base query dengan relationship dan search logic dari query lama
+    $baseQuery = Product::with('satuan');
 
-    // Query untuk Produk Titipan - PERBAIKAN: gunakan 'titipan'
-    $productsTitipQuery = Product::where('jenis', 'titipan') // atau Product::titipan()
-        ->when($search, function ($query, $search) {
-            $query->where('name', 'like', "%$search%");
-        })
-        ->orderBy('name', $sort);
-
-    // Ambil data dengan pagination
-    $productsBuy = $productsBuyQuery->paginate($perPage, ['*'], 'productsBuy');
-    $productsTitip = $productsTitipQuery->paginate($perPage, ['*'], 'productsTitip');
-
-    // Debug hanya jika diperlukan (hapus di production)
-    if (config('app.debug')) {
-        Log::info('Products Buy Count: ' . $productsBuy->total());
-        Log::info('Products Titip Count: ' . $productsTitip->total());
+    // Terapkan search jika ada
+    if ($search) {
+        $baseQuery->where(function ($query) use ($search) {
+            $query->where('name', 'like', '%' . $search . '%')
+                  ->orWhere('price', 'like', '%' . $search . '%');
+        });
     }
+
+    // Query untuk Produk Beli
+    $productsBuyQuery = clone $baseQuery;
+    $productsBuy = $productsBuyQuery
+        ->where('jenis', 'beli')
+        ->orderBy('created_at', $sort)
+        ->paginate($perPage, ['*'], 'productsBuy');
+
+    // Query untuk Produk Titipan
+    $productsTitipQuery = clone $baseQuery;
+    $productsTitip = $productsTitipQuery
+        ->where('jenis', 'titipan')
+        ->orderBy('created_at', $sort)
+        ->paginate($perPage, ['*'], 'productsTitip');
 
     return view('page.superadmin.Product.index', compact('productsBuy', 'productsTitip'));
 }

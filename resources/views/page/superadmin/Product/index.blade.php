@@ -23,13 +23,14 @@
                     <div class="d-flex">
                         <input style="width: 200px;" type="text" name="search" class="form-control me-2" placeholder="Cari..." value="{{ request('search') }}">
                         <select name="perpage" class="form-select me-2" onchange="this.form.submit()">
-                            <option value="5" {{ request('perpage') == 5 ? 'selected' : '' }}>5</option>
-                            <option value="25" {{ request('perpage') == 25 ? 'selected' : '' }}>25</option>
-                            <option value="100" {{ request('perpage') == 100 ? 'selected' : '' }}>100</option>
+                            <option value="5" {{ request('perpage', 5) == 5 ? 'selected' : '' }}>5</option>
+                            <option value="10" {{ request('perpage', 5) == 10 ? 'selected' : '' }}>10</option>
+                            <option value="25" {{ request('perpage', 5) == 25 ? 'selected' : '' }}>25</option>
+                            <option value="100" {{ request('perpage', 5) == 100 ? 'selected' : '' }}>100</option>
                         </select>
                         <select name="sort" class="form-select" onchange="this.form.submit()">
-                            <option value="asc" {{ request('sort') == 'asc' ? 'selected' : '' }}>A-Z</option>
-                            <option value="desc" {{ request('sort') == 'desc' ? 'selected' : '' }}>Z-A</option>
+                            <option value="asc" {{ request('sort', 'asc') == 'asc' ? 'selected' : '' }}>Terlama</option>
+                            <option value="desc" {{ request('sort', 'asc') == 'desc' ? 'selected' : '' }}>Terbaru</option>
                         </select>
                     </div>
                 </form>
@@ -45,7 +46,7 @@
                         Debug: Produk Beli: {{ $productsBuy->total() ?? 0 }} |
                         Produk Titip: {{ $productsTitip->total() ?? 0 }} |
                         Search: {{ request('search') ?? 'none' }} |
-                        PerPage: {{ request('perpage', 10) }} |
+                        PerPage: {{ request('perpage', 5) }} |
                         Sort: {{ request('sort', 'asc') }}
                     </small>
                 </div>
@@ -161,7 +162,7 @@
                                         <td class="sticky-column" style="left: 0; z-index: 1; background: white;">{{ $sn->name }}</td>
                                         <td>
                                             @if($sn->image)
-                                                <img src="{{ asset('/storage/app/public/' . $sn->image) }}" alt="{{ $sn->name }}" width="80" class="img-thumbnail">
+                                                <img src="{{ asset('storage/' . $sn->image) }}" alt="{{ $sn->name }}" width="80" class="img-thumbnail">
                                             @else
                                                 <span class="text-muted badge bg-secondary">No Image</span>
                                             @endif
