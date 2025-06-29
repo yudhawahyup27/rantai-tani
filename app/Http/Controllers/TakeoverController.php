@@ -14,7 +14,8 @@ class TakeoverController extends Controller
 {
     public function index(Request $request)
     {
-       
+
+       $nomerhp = User::where('id', 1)->value('telepon');
         $data = Takeover::with(['investor', 'fromUser', 'toUser', 'tossa'])->get();
         return view('page.superadmin.investor.takeover.index', compact('data','nomerhp'));
     }
