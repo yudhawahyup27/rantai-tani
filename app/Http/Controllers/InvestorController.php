@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Investor;
+use App\Models\investor;
 use App\Models\Mastersaham;
 use App\Models\Tossa;
 use App\Models\User;
@@ -13,14 +13,14 @@ class InvestorController extends Controller
     // Menampilkan daftar investor
     public function index()
     {
-        $data = Investor::with(['user', 'tossa'])->get();
+        $data = investor::with(['user', 'tossa'])->get();
         return view('page.superadmin.investor.index', compact('data'));
     }
 
     // Menampilkan form tambah atau edit investor
     public function manage($id = null)
     {
-        $data = $id ? Investor::findOrFail($id) : new Investor();
+        $data = $id ? investor::findOrFail($id) : new Investor();
 
         // Ambil user dengan role investor
         $user = User::where('id_role', '3')->pluck('username', 'id');
@@ -66,7 +66,7 @@ class InvestorController extends Controller
         $newDeviden = ($newTotal * ($persentase / 100)) / 12;
 
         // Cek apakah kombinasi user_id dan tossa_id sudah ada
-        $existingInvestor = Investor::where('user_id', $request->name)
+        $existingInvestor = investor::where('user_id', $request->name)
             ->where('tossa_id', $request->tossa)
             ->first();
 
@@ -78,7 +78,7 @@ class InvestorController extends Controller
             $existingInvestor->save();
         } else {
             // Simpan investor baru
-            Investor::create([
+            investor::create([
                 'user_id' => $request->name,
                 'tossa_id' => $request->tossa,
                 'perlot' => $request->lot,
@@ -108,7 +108,7 @@ class InvestorController extends Controller
             'Deviden' => 'required|numeric|min:1',
         ]);
 
-        $investor = Investor::findOrFail($id);
+        $investor = investor::findOrFail($id);
 
         $lotLama = $investor->perlot;
         $tossaLama = $investor->tossa_id;
@@ -154,7 +154,7 @@ class InvestorController extends Controller
     // Menghapus data investor
     public function destroy($id)
     {
-        $investor = Investor::findOrFail($id);
+        $investor = investor::findOrFail($id);
 
         // Ambil informasi terkait saham sebelum dihapus
         $lot = $investor->perlot;
