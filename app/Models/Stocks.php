@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\newStock;
 
 class Stocks extends Model
 {
@@ -25,7 +26,7 @@ class Stocks extends Model
 
         public function newStock()
 {
-    return $this->hasMany(NewStock::class, 'stock_id');
+    return $this->hasMany(newStock::class, 'stock_id');
 }
 }
 
