@@ -16,28 +16,42 @@ class ProductController extends Controller
     $search = $request->input('search');
     $sort = $request->input('sort', 'asc');
     $perPage = $request->input('per_page', 5);
+    $activeTab = $request->input('tab', 'titipan'); // Default ke titipan
 
-    $query = Product::with('satuan');
+    // Base query
+    $baseQuery = Product::with('satuan');
 
     // Apply search filter
     if ($search) {
-        $query->where(function ($q) use ($search) {
+        $baseQuery->where(function ($q) use ($search) {
             $q->where('name', 'like', '%' . $search . '%')
               ->orWhere('price', 'like', '%' . $search . '%')
               ->orWhere('category', 'like', '%' . $search . '%');
         });
     }
 
-    // Apply sorting
-    $query->orderBy('category', 'asc')->orderBy('name', $sort);
+    // Separate queries for each type
+    $titipanQuery = clone $baseQuery;
+    $beliQuery = clone $baseQuery;
 
-    // Get paginated data
-    $data = $query->paginate($perPage);
+    // Filter by type
+    $titipanData = $titipanQuery
+        ->where('jenis', 'titipan')
+        ->orderBy('category', 'asc')
+        ->orderBy('name', $sort)
+        ->paginate($perPage, ['*'], 'titipan_page');
+
+    $beliData = $beliQuery
+        ->where('jenis', 'beli')
+        ->orderBy('category', 'asc')
+        ->orderBy('name', $sort)
+        ->paginate($perPage, ['*'], 'beli_page');
 
     // Append query parameters to pagination links
-    $data->appends($request->query());
+    $titipanData->appends($request->except('titipan_page'));
+    $beliData->appends($request->except('beli_page'));
 
-    return view('page.superadmin.Product.index', compact('data'));
+    return view('page.superladmin.Product.index', compact('titipanData', 'beliData', 'activeTab'));
 }
 
     public function manage($id = null){
