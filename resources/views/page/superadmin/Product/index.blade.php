@@ -54,7 +54,7 @@
                                 <thead>
                                     <tr class="text-center">
                                         <th>No</th>
-                                        <th>Name</th>
+                                        <th class="sticky-colum">Name</th>
                                         <th>Image</th>
                                         <th>Price Buy</th>
                                         <th>Price Sell</th>
@@ -74,7 +74,7 @@
                                         @foreach ($products as $sn)
                                             <tr class="text-center">
                                                 <td>{{ $loop->iteration }}</td>
-                                                <td>{{ $sn->name }}</td>
+                                                <td class="sticky-colum">{{ $sn->name }}</td>
                                                 <td>
                                                     @if($sn->image)
                                                         <img src="{{ asset('/storage/app/public/' . $sn->image) }}" alt="{{ $sn->name }}" width="100">
