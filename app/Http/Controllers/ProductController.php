@@ -31,7 +31,7 @@ class ProductController extends Controller
     public function manage($id = null){
         $data = $id ? Product::findOrFail($id) : new Product();
         $satuan = Satuan::all();
-        return view('page.superadmin.product.manage', compact('data','satuan'));
+        return view('page.superadmin.Product.manage', compact('data','satuan'));
     }
 
     public function store(Request $request)
@@ -145,6 +145,6 @@ class ProductController extends Controller
         $product = Product::findOrFail($id);
         $histories = ProductPriceHistory::where('product_id', $id)->orderByDesc('created_at')->get();
 
-        return view('page.superadmin.product.price-history', compact('product', 'histories'));
+        return view('page.superadmin.Product.price-history', compact('product', 'histories'));
     }
 }
