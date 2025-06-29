@@ -30,7 +30,7 @@ class ProductController extends Controller
         ->orderBy('name', $sort)
         ->paginate($perPage, ['*'], 'titip_page');
 
-    return view('page.superadmin.product.index', compact('productsBuy', 'productsTitip'));
+    return view('page.superadmin.Product.index', compact('productsBuy', 'productsTitip'));
 }
 
 
