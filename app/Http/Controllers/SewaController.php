@@ -10,7 +10,7 @@ class SewaController extends Controller
     public function index()
     {
          $data = sewas::with(['user.userTossa'])->get();
-    return view('page.superadmin.sewa.index', compact('data'));
+    return view('page.superadmin.Sewa.index', compact('data'));
     }
 
     public function manage($id = null)
