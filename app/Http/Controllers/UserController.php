@@ -52,7 +52,7 @@ class UserController extends Controller
             'id_role' => $request->id_role,
         ]);
 
-        return redirect()->route('admin.User')->with('success', 'User berhasil ditambahkan'); // Ganti nama rute jika diperlukan
+        return redirect()->route('admin.user')->with('success', 'User berhasil ditambahkan'); // Ganti nama rute jika diperlukan
     }
 
     public function update(Request $request, $id) {
@@ -83,12 +83,12 @@ class UserController extends Controller
             'id_role' => $request->id_role,
         ]);
 
-        return redirect()->route('admin.User')->with('success', 'User berhasil diperbarui'); // Ganti nama rute jika diperlukan
+        return redirect()->route('admin.user')->with('success', 'User berhasil diperbarui'); // Ganti nama rute jika diperlukan
     }
 
     // Menghapus user
     public function destroy($id) {
         User::findOrFail($id)->delete();
-        return redirect()->route('admin.User')->with('success', 'User berhasil dihapus');
+        return redirect()->route('admin.user')->with('success', 'User berhasil dihapus');
     }
 }
