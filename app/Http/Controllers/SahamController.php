@@ -11,15 +11,15 @@ class SahamController extends Controller
     public function index()
     {
         $data = Mastersaham::all();
-      
-        return view('page.superadmin.saham.index', compact('data'));
+
+        return view('page.superadmin.Saham.index', compact('data'));
     }
 
     public function manage($id = null)
     {
         $data = $id ? Mastersaham::find($id) : new Mastersaham();
         $tossa = Tossa::all();
-        return view('page.superadmin.saham.manage', compact('tossa', 'data'));
+        return view('page.superadmin.Saham.manage', compact('tossa', 'data'));
     }
 
     public function store(Request $request)
