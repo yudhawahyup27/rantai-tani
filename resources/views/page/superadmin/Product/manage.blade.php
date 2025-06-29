@@ -87,7 +87,7 @@
 
                   @if (!empty($data->image))
                       <div class="mt-2">
-                          <img src="{{ asset('storage/' . $data->image) }}" class="img-thumbnail" width="100">
+                          <img src="{{ asset('/storage/app/public/' . $data->image) }}" class="img-thumbnail" width="100">
                           <div class="form-check mt-2">
                               <input type="checkbox" class="form-check-input" name="remove_image" value="1" id="remove_image">
                               <label for="remove_image" class="form-check-label">Hapus gambar</label>

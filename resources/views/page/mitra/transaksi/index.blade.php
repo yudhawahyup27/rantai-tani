@@ -60,7 +60,7 @@
                         <div class="card h-100 shadow-sm">
                             <div class="card-body d-flex align-items-center">
                                 <div class="me-3">
-                                    <img src="{{ asset('storage/' . $item->product->image) }}" alt="{{ $item->product->name }}" class="img-thumbnail" style="width: 100px; height: 100px; object-fit: cover;">
+                                    <img src="{{ asset('/storage/app/public/' . $item->product->image) }}" alt="{{ $item->product->name }}" class="img-thumbnail" style="width: 100px; height: 100px; object-fit: cover;">
                                 </div>
                                 <div>
                                     <h5 class="card-title mb-1">{{ $item->product->name }}</h5>

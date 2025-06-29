@@ -60,7 +60,7 @@
                                 <td>{{ $datas->product->name ?? '-' }}</td>
                                 <td>
                                     @if ($datas->product && $datas->product->image)
-                                        <img src="{{ asset('storage/' . $datas->product->image) }}" alt="Gambar Produk" width="60" class="img-thumbnail">
+                                        <img src="{{ asset('/storage/app/public/' . $datas->product->image) }}" alt="Gambar Produk" width="60" class="img-thumbnail">
                                     @else
                                         Tidak Ada Gambar
                                     @endif
