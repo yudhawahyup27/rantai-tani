@@ -11,7 +11,9 @@ $logfile = __DIR__ . '/git-webhook-log.txt';
 $output = [];
 $result_code = 0;
 
-$command = 'cd ' . escapeshellarg(dirname(__DIR__)) . ' && git pull 2>&1';
+// Ganti dirname(__DIR__) → __DIR__ karena .git ada di dalam public_html
+$command = 'cd ' . escapeshellarg(__DIR__) . ' && git pull 2>&1';
+
 exec($command, $output, $result_code);
 
 file_put_contents(
