@@ -3,7 +3,7 @@ name: Deploy Laravel to Shared Hosting via FTP
 on:
   push:
     branches:
-      - main  # Ganti jika pakai branch lain
+      - master  # Ganti jika pakai branch lain
 
 jobs:
   ftp-deploy:
