@@ -1,0 +1,29 @@
+name: Deploy Laravel to Shared Hosting via FTP
+
+on:
+  push:
+    branches:
+      - main  # Ganti jika pakai branch lain
+
+jobs:
+  ftp-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      - name: Upload Files via FTP
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.4
+        with:
+          server: 145.223.108.205
+          username: u514010321
+          password: Admin1927@
+          port: 21
+          server-dir: public_html/
+          exclude: |
+            **/.git*
+            **/.github*
+            node_modules/
+            vendor/
+            .env
