@@ -70,8 +70,8 @@
 
                     @foreach($groupedBeli as $category => $products)
                     <div class="card mt-3">
-                        <div class="card-header bg-primary text-white">
-                            <h6 class="mb-0 text-uppercase">{{ $category ?? 'Tanpa Category' }} - BELI</h6>
+                        <div class="card-header bg-white text-primary">
+                            <h6 class="mb-0 text-uppercase">{{ $category ?? 'Tanpa Category' }} </h6>
                         </div>
                         <div class="card-body">
                             <div class="table-responsive p-0">
@@ -189,8 +189,8 @@
 
                     @foreach($groupedTitipan as $category => $products)
                     <div class="card mt-3">
-                        <div class="card-header bg-success text-white">
-                            <h6 class="mb-0 text-uppercase">{{ $category ?? 'Tanpa Category' }} - TITIPAN</h6>
+                        <div class="card-header bg-white text-primary">
+                            <h6 class="mb-0 text-uppercase">{{ $category ?? 'Tanpa Category' }} </h6>
                         </div>
                         <div class="card-body">
                             <div class="table-responsive p-0">
