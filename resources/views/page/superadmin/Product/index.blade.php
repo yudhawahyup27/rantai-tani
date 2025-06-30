@@ -32,6 +32,13 @@
                             <option value="asc" {{ request('sort') == 'asc' ? 'selected' : '' }}>A-Z</option>
                             <option value="desc" {{ request('sort') == 'desc' ? 'selected' : '' }}>Z-A</option>
                         </select>
+                        <select name="jenis" class="form-select" onchange="this.form.submit()">
+    <option value="all" {{ request('jenis') == 'all' ? 'selected' : '' }}>Semua Jenis</option>
+    <option value="garingan" {{ request('jenis') == 'garingan' ? 'selected' : '' }}>Garingan</option>
+    <option value="sayur" {{ request('jenis') == 'sayur' ? 'selected' : '' }}>Sayur</option>
+    <option value="buah" {{ request('jenis') == 'buah' ? 'selected' : '' }}>Buah</option>
+</select>
+
                     </div>
                 </form>
                 <a href="{{ route('admin.product.manage') }}" class="btn btn-primary">Tambah Product</a>

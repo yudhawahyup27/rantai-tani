@@ -12,39 +12,48 @@ use App\Notifications\ProductPriceChanged;
 
 class ProductController extends Controller
 {
-  public function index(Request $request){
+ public function index(Request $request)
+{
     $search = $request->input('search');
+    $jenis = $request->input('jenis', 'all');
     $sort = $request->input('sort', 'asc');
     $perPage = $request->input('per_page', 5);
 
     // Query untuk Product Beli
     $dataBeli = Product::with('satuan')
-        ->where('category', 'beli') // Asumsi ada field 'category' untuk membedakan
-        ->where(function ($query) use ($search) {
-            if ($search) {
-                $query->where('name', 'like', '%' . $search . '%')
-                      ->orWhere('price', 'like', '%' . $search . '%')
-                      ->orWhere('category', 'like', '%' . $search . '%');
-            }
+        ->where('category', 'beli')
+        ->when($search, function ($query) use ($search) {
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'like', '%' . $search . '%')
+                  ->orWhere('price', 'like', '%' . $search . '%')
+                  ->orWhere('category', 'like', '%' . $search . '%');
+            });
+        })
+        ->when($jenis !== 'all', function ($query) use ($jenis) {
+            $query->where('jenis', $jenis); // pastikan kolom ini ada
         })
         ->orderBy('created_at', $sort)
         ->paginate($perPage, ['*'], 'beli_page');
 
     // Query untuk Product Titipan
     $dataTitipan = Product::with('satuan')
-        ->where('category', 'titipan') // Asumsi ada field 'type' untuk membedakan
-        ->where(function ($query) use ($search) {
-            if ($search) {
-                $query->where('name', 'like', '%' . $search . '%')
-                      ->orWhere('price', 'like', '%' . $search . '%')
-                      ->orWhere('category', 'like', '%' . $search . '%');
-            }
+        ->where('category', 'titipan')
+        ->when($search, function ($query) use ($search) {
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'like', '%' . $search . '%')
+                  ->orWhere('price', 'like', '%' . $search . '%')
+                  ->orWhere('category', 'like', '%' . $search . '%');
+            });
+        })
+        ->when($jenis !== 'all', function ($query) use ($jenis) {
+            $query->where('jenis', $jenis); // pastikan kolom ini ada
         })
         ->orderBy('created_at', $sort)
         ->paginate($perPage, ['*'], 'titipan_page');
 
     return view('page.superadmin.Product.index', compact('dataBeli', 'dataTitipan'));
 }
+
 
     public function manage($id = null){
         $data = $id ? Product::findOrFail($id) : new Product();
