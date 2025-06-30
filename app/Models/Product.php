@@ -12,7 +12,8 @@ class Product extends Model
 
     protected $table = 'products'; // Pastikan sesuai dengan nama tabel di database
 
-    protected $fillable = ["name", "price", "image", "laba", "id_satuan", "category","jenis","pemilik", "price_sell"];
+    protected $fillable = ["name", "price", "image", "laba", "id_satuan", "category","jenis","pemilik", "price_sell", 'catatan',
+    'harga_rekomendasi',];
 
     public function satuan()
     {

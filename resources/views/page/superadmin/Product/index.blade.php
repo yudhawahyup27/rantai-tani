@@ -85,7 +85,9 @@
                                             <th>Price Sell</th>
                                             <th>Category</th>
                                             <th>Satuan</th>
+                                            <th>Harga Rekomentasi</th>
                                             <th>Laba</th>
+                                            <th>Catatan</th>
                                             <th>Di Update</th>
                                             <th>Aksi</th>
                                         </tr>
@@ -111,7 +113,9 @@
                                             <td>Rp. {{ number_format($sn->price_sell, 0, ',', '.') }}</td>
                                             <td>{{ $sn->category ?? '-' }}</td>
                                             <td>{{ $sn->satuan->nama_satuan ?? '-' }}</td>
+                                            <td>Rp. {{ number_format($item->harga_rekomendasi, 0, ',', '.') }}</td>
                                             <td>Rp. {{ number_format($sn->laba, 0, ',', '.') }}</td>
+                                            <td>{{ $item->catatan ?? '-' }}</td>
                                             <td>{{ $sn->updated_at ? $sn->updated_at->format('d-m-Y H:i') : '-' }}</td>
                                             <td>
                                                 <div class="d-flex justify-content-center gap-2">

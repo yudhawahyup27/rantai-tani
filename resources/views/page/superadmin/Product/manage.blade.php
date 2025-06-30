@@ -81,6 +81,21 @@
               </div>
 
               <div class="mb-3">
+    <label for="harga_rekomendasi">Harga Rekomendasi</label>
+    <input type="number" step="0.01" name="harga_rekomendasi"
+        class="form-control @error('harga_rekomendasi') is-invalid @enderror"
+        value="{{ old('harga_rekomendasi', $data->harga_rekomendasi ?? '') }}">
+    @error('harga_rekomendasi') <div class="invalid-feedback">{{ $message }}</div> @enderror
+</div>
+
+<div class="mb-3">
+    <label for="catatan">Catatan</label>
+    <textarea name="catatan" class="form-control @error('catatan') is-invalid @enderror" rows="3"
+        placeholder="Tambahkan catatan jika ada...">{{ old('catatan', $data->catatan ?? '') }}</textarea>
+    @error('catatan') <div class="invalid-feedback">{{ $message }}</div> @enderror
+</div>
+
+              <div class="mb-3">
                   <label for="image">Image Product</label>
                   <input type="file" name="image" class="form-control @error('image') is-invalid @enderror">
                   @error('image') <div class="invalid-feedback">{{ $message }}</div> @enderror

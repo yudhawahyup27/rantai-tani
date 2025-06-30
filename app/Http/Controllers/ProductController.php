@@ -61,103 +61,111 @@ class ProductController extends Controller
         return view('page.superadmin.Product.manage', compact('data','satuan'));
     }
 
-    public function store(Request $request)
-    {
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'price' => 'required|numeric',
-            'price_sell' => 'required|numeric',
-            'laba' => 'required|numeric',
-            'category' => 'required|string',
-            'id_satuan' => 'required|exists:satuans,id',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-        ]);
+  public function store(Request $request)
+{
+    $request->validate([
+        'name' => 'required|string|max:255',
+        'price' => 'required|numeric',
+        'price_sell' => 'required|numeric',
+        'laba' => 'required|numeric',
+        'category' => 'required|string',
+        'id_satuan' => 'required|exists:satuans,id',
+        'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+        'catatan' => 'nullable|string',
+        'harga_rekomendasi' => 'nullable|numeric',
+    ]);
 
-        $imagePath = null;
-        if ($request->hasFile('image')) {
-            $imagePath = $request->file('image')->store('products', 'public');
+    $imagePath = $request->hasFile('image')
+        ? $request->file('image')->store('products', 'public')
+        : null;
+
+    $total = $request->price + $request->laba;
+
+    $product = Product::create([
+        'name' => $request->name,
+        'price' => $request->price,
+        'price_sell' => $total,
+        'laba' => $request->laba,
+        'category' => $request->category,
+        'jenis' => $request->jenis,
+        'pemilik' => $request->pemilik,
+        'id_satuan' => $request->id_satuan,
+        'image' => $imagePath,
+        'catatan' => $request->catatan,
+        'harga_rekomendasi' => $request->harga_rekomendasi,
+    ]);
+
+    ProductPriceHistory::create([
+        'product_id' => $product->id,
+        'old_price_sell' => null,
+        'new_price_sell' => $total,
+    ]);
+
+    return redirect()->route('admin.product')->with('success', 'Produk berhasil ditambahkan.');
+}
+
+public function update(Request $request, $id)
+{
+    $product = Product::findOrFail($id);
+
+    $request->validate([
+        'name' => 'required|string|max:255',
+        'price' => 'required|numeric',
+        'price_sell' => 'required|numeric',
+        'laba' => 'required|numeric',
+        'category' => 'required|string',
+        'id_satuan' => 'required|exists:satuans,id',
+        'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+        'catatan' => 'nullable|string',
+        'harga_rekomendasi' => 'nullable|numeric',
+    ]);
+
+    if ($request->hasFile('image')) {
+        if ($product->image) {
+            Storage::disk('public')->delete($product->image);
         }
+        $product->image = $request->file('image')->store('products', 'public');
+    }
 
-        $total = $request->input('price') + $request->input('laba');
+    if ($request->has('remove_image') && $request->remove_image == 1) {
+        if ($product->image) {
+            Storage::disk('public')->delete($product->image);
+        }
+        $product->image = null;
+    }
 
-        $product = Product::create([
-            'name' => $request->name,
-            'price' => $request->price,
-            'price_sell' => $total,
-            'laba' => $request->laba,
-            'jenis' => $request->jenis,
-            'pemilik' => $request->pemilik,
-            'category' => $request->category,
-            'id_satuan' => $request->id_satuan,
-            'image' => $imagePath,
-        ]);
+    $oldPriceSell = $product->price_sell;
 
+    $product->update([
+        'name' => $request->name,
+        'price' => $request->price,
+        'laba' => $request->laba,
+        'price_sell' => $request->price_sell,
+        'category' => $request->category,
+        'jenis' => $request->jenis,
+        'pemilik' => $request->pemilik,
+        'id_satuan' => $request->id_satuan,
+        'image' => $product->image,
+        'catatan' => $request->catatan,
+        'harga_rekomendasi' => $request->harga_rekomendasi,
+    ]);
+
+    if ($oldPriceSell != $request->price_sell) {
         ProductPriceHistory::create([
             'product_id' => $product->id,
-            'old_price_sell' => null,
-            'new_price_sell' => $total,
+            'old_price_sell' => $oldPriceSell,
+            'new_price_sell' => $request->price_sell,
         ]);
 
-        return redirect()->route('admin.product')->with('success', 'Produk berhasil ditambahkan.');
+        $mitras = User::where('id_role', 2)->get();
+        foreach ($mitras as $mitra) {
+            $mitra->notify(new ProductPriceChanged($product->name, $oldPriceSell, $request->price_sell));
+        }
     }
 
-    public function update(Request $request, $id)
-    {
-        $product = Product::findOrFail($id);
+    return redirect()->route('admin.product')->with('success', 'Produk berhasil diperbarui.');
+}
 
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'price' => 'required|numeric',
-            'price_sell' => 'required|numeric',
-            'category' => 'required|string',
-            'id_satuan' => 'required|exists:satuans,id',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-        ]);
-
-        if ($request->hasFile('image')) {
-            if ($product->image) {
-                Storage::disk('public')->delete($product->image);
-            }
-            $imagePath = $request->file('image')->store('products', 'public');
-            $product->image = $imagePath;
-        }
-
-        if ($request->has('remove_image') && $request->remove_image == 1) {
-            if ($product->image) {
-                Storage::disk('public')->delete($product->image);
-            }
-            $product->image = null;
-        }
-
-        $oldPriceSell = $product->price_sell;
-
-        $product->update([
-            'name' => $request->name,
-            'price' => $request->price,
-            'price_sell' => $request->price_sell,
-            'category' => $request->category,
-             'jenis' => $request->jenis,
-            'pemilik' => $request->pemilik,
-            'id_satuan' => $request->id_satuan,
-            'image' => $product->image,
-        ]);
-
-        if ($oldPriceSell != $request->price_sell) {
-            ProductPriceHistory::create([
-                'product_id' => $product->id,
-                'old_price_sell' => $oldPriceSell,
-                'new_price_sell' => $request->price_sell,
-            ]);
-
-
-  $mitras = User::where('id_role', 2)->get();
-            foreach ($mitras as $mitra) {
-                $mitra->notify(new ProductPriceChanged($product->name, $oldPriceSell, $request->price_sell));
-            }
-        }
-
-        return redirect()->route('admin.product')->with('success', 'Produk berhasil diperbarui.');
-    }
 
     public function destroy($id)
     {
