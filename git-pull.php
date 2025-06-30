@@ -9,14 +9,17 @@ if (!isset($_GET['secret']) || $_GET['secret'] !== $secret) {
 
 $logfile = __DIR__ . '/git-webhook-log.txt';
 $output = [];
+$result_code = 0;
 
-exec('cd .. && git pull 2>&1', $output, $result_code);
+$command = 'cd ' . escapeshellarg(dirname(__DIR__)) . ' && git pull 2>&1';
+exec($command, $output, $result_code);
 
-// Simpan log
-file_put_contents($logfile, date('Y-m-d H:i:s') . " - git pull result: " . implode("\n", $output) . "\n\n", FILE_APPEND);
+file_put_contents(
+    $logfile,
+    date('Y-m-d H:i:s') . " - CMD: $command\nResult Code: $result_code\n" . implode("\n", $output) . "\n\n",
+    FILE_APPEND
+);
 
-// Tampilkan hasil ke browser
-echo "<pre>";
-echo "Code: $result_code\n";
-echo implode("\n", $output);
+echo "<pre>Command: $command\nCode: $result_code\n";
+echo htmlspecialchars(implode("\n", $output));
 echo "</pre>";
