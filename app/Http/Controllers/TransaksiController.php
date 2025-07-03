@@ -52,7 +52,7 @@ class TransaksiController extends Controller
         }
 
         // Buat key berdasarkan kategori dan jenis
-        $key = $category . '_' . $jenis;
+        $key = $jenis . '_' . $category  ;
 
         if (!isset($productsByCategory[$key])) {
             $productsByCategory[$key] = [];
