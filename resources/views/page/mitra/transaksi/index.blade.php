@@ -85,13 +85,13 @@
     @endif
 
     {{-- Debug Info (hapus setelah testing) --}}
-    @if(config('app.debug'))
+    {{-- @if(config('app.debug'))
         <div class="alert alert-info">
             <strong>Debug Info:</strong><br>
             Total products: {{ $products->count() }}<br>
             Category counts: {{ json_encode($categoryCount) }}
         </div>
-    @endif
+    @endif --}}
 
     {{-- Card --}}
     <div class="card shadow">
