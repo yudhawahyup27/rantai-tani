@@ -11,7 +11,8 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 
 class TransaksiController extends Controller
-{public function index()
+{
+   public function index()
 {
     $user = auth()->user();
 
@@ -23,21 +24,75 @@ class TransaksiController extends Controller
 
     // Buat konstanta data stok hari ini
     $stokHariIni = [];
-
-
     foreach ($products as $product) {
         $stokHariIni[$product->id] = $product->newStock->first()->quantity_added ?? 0;
     }
 
-
-      $latestAddedStocks = [];
-
+    $latestAddedStocks = [];
     foreach ($products as $product) {
         $latestAddedStocks[$product->id] = $product->newStock->first()->quantity_added ?? 0;
     }
 
+    // Definisikan kategori yang valid
+    $validCategories = ['sayur', 'buah', 'garingan'];
+    $validJenis = ['beli', 'titipan'];
+
+    // Grouping produk berdasarkan kategori dan jenis
+    $productsByCategory = [];
+    $categoryCount = [];
+
+    foreach ($products as $product) {
+        $category = strtolower(trim($product->product->category));
+        $jenis = strtolower(trim($product->product->jenis));
+
+        // Validasi kategori dan jenis
+        if (!in_array($category, $validCategories) || !in_array($jenis, $validJenis)) {
+            // Skip produk yang tidak sesuai kategori/jenis atau masukkan ke kategori 'lainnya'
+            continue;
+        }
+
+        // Buat key berdasarkan kategori dan jenis
+        $key = $category . '_' . $jenis;
+
+        if (!isset($productsByCategory[$key])) {
+            $productsByCategory[$key] = [];
+        }
+
+        $productsByCategory[$key][] = $product;
+    }
+
+    // Hitung jumlah produk per kategori
+    foreach ($productsByCategory as $key => $items) {
+        $categoryCount[$key] = count($items);
+    }
+
+    // Pastikan semua kategori yang diperlukan tersedia
+    $requiredCategories = [
+        'sayur_beli',
+        'sayur_titipan',
+        'buah_beli',
+        'buah_titipan',
+        'garingan_beli',
+        'garingan_titipan'
+    ];
+
+    foreach ($requiredCategories as $category) {
+        if (!isset($productsByCategory[$category])) {
+            $productsByCategory[$category] = [];
+            $categoryCount[$category] = 0;
+        }
+    }
+
     $shift = $user->workShift->name ?? '-';
-    return view('page.mitra.transaksi.index', compact('products', 'stokHariIni','shift','latestAddedStocks'));
+
+    return view('page.mitra.transaksi.index', compact(
+        'products',
+        'productsByCategory',
+        'categoryCount',
+        'stokHariIni',
+        'shift',
+        'latestAddedStocks'
+    ));
 }
 
 public function store(Request $request, $productId)
