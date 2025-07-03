@@ -33,12 +33,11 @@
                             <option value="desc" {{ request('sort') == 'desc' ? 'selected' : '' }}>Z-A</option>
                         </select>
                         <select name="jenis" class="form-select" onchange="this.form.submit()">
-    <option value="all" {{ request('jenis') == 'all' ? 'selected' : '' }}>Semua Jenis</option>
-    <option value="garingan" {{ request('jenis') == 'garingan' ? 'selected' : '' }}>Garingan</option>
-    <option value="sayur" {{ request('jenis') == 'sayur' ? 'selected' : '' }}>Sayur</option>
-    <option value="buah" {{ request('jenis') == 'buah' ? 'selected' : '' }}>Buah</option>
-</select>
-
+                            <option value="all" {{ request('jenis') == 'all' ? 'selected' : '' }}>Semua Jenis</option>
+                            <option value="garingan" {{ request('jenis') == 'garingan' ? 'selected' : '' }}>Garingan</option>
+                            <option value="sayur" {{ request('jenis') == 'sayur' ? 'selected' : '' }}>Sayur</option>
+                            <option value="buah" {{ request('jenis') == 'buah' ? 'selected' : '' }}>Buah</option>
+                        </select>
                     </div>
                 </form>
                 <a href="{{ route('admin.product.manage') }}" class="btn btn-primary">Tambah Product</a>
@@ -47,7 +46,7 @@
 
         <div class="card-body px-0 pt-0 pb-2">
             <!-- Tab Navigation -->
-            <ul class="nav nav-tabs" id="productTab" role="tablist">
+            <ul class="nav nav-tabs d-flex" id="productTab" role="tablist">
                 <li class="nav-item" role="presentation">
                     <button class="nav-link active" id="beli-tab" data-bs-toggle="tab" data-bs-target="#beli" type="button" role="tab" aria-controls="beli" aria-selected="true">
                         Product Beli ({{ $dataBeli->total() }})
@@ -137,7 +136,7 @@
                     </div>
                     @endforeach
 
-                    <!-- Pagination untuk Beli -->
+                    <!-- Improved Pagination untuk Beli -->
                     @if($dataBeli->hasPages())
                     <div class="d-flex justify-content-center mt-4">
                         <nav aria-label="Page navigation Beli">
@@ -152,8 +151,45 @@
                                     </li>
                                 @endif
 
-                                @foreach ($dataBeli->getUrlRange(1, $dataBeli->lastPage()) as $page => $url)
-                                    @if ($page == $dataBeli->currentPage())
+                                @php
+                                    $currentPage = $dataBeli->currentPage();
+                                    $lastPage = $dataBeli->lastPage();
+                                    $start = max(1, $currentPage - 2);
+                                    $end = min($lastPage, $currentPage + 2);
+
+                                    // Always show first page
+                                    if ($start > 1) {
+                                        $showFirst = true;
+                                        $showFirstDots = $start > 2;
+                                    } else {
+                                        $showFirst = false;
+                                        $showFirstDots = false;
+                                    }
+
+                                    // Always show last page
+                                    if ($end < $lastPage) {
+                                        $showLast = true;
+                                        $showLastDots = $end < $lastPage - 1;
+                                    } else {
+                                        $showLast = false;
+                                        $showLastDots = false;
+                                    }
+                                @endphp
+
+                                @if($showFirst)
+                                    <li class="page-item">
+                                        <a class="page-link" href="{{ $dataBeli->appends(array_merge(request()->input(), ['tab' => 'beli']))->url(1) }}">1</a>
+                                    </li>
+                                @endif
+
+                                @if($showFirstDots)
+                                    <li class="page-item disabled">
+                                        <span class="page-link">...</span>
+                                    </li>
+                                @endif
+
+                                @for ($page = $start; $page <= $end; $page++)
+                                    @if ($page == $currentPage)
                                         <li class="page-item active">
                                             <span class="page-link">{{ $page }}</span>
                                         </li>
@@ -162,7 +198,19 @@
                                             <a class="page-link" href="{{ $dataBeli->appends(array_merge(request()->input(), ['tab' => 'beli']))->url($page) }}">{{ $page }}</a>
                                         </li>
                                     @endif
-                                @endforeach
+                                @endfor
+
+                                @if($showLastDots)
+                                    <li class="page-item disabled">
+                                        <span class="page-link">...</span>
+                                    </li>
+                                @endif
+
+                                @if($showLast)
+                                    <li class="page-item">
+                                        <a class="page-link" href="{{ $dataBeli->appends(array_merge(request()->input(), ['tab' => 'beli']))->url($lastPage) }}">{{ $lastPage }}</a>
+                                    </li>
+                                @endif
 
                                 @if ($dataBeli->hasMorePages())
                                     <li class="page-item">
@@ -238,7 +286,7 @@
                                             <td>{{ $sn->satuan->nama_satuan ?? '-' }}</td>
                                             <td>Rp. {{ number_format($sn->laba, 0, ',', '.') }}</td>
                                             <td>Rp. {{ number_format($sn->harga_rekomendasi, 0, ',', '.') }}</td>
-                            <td>{{ $sn->catatan ?? '-' }}</td>
+                                            <td>{{ $sn->catatan ?? '-' }}</td>
                                             <td>{{ $sn->updated_at ? $sn->updated_at->format('d-m-Y H:i') : '-' }}</td>
                                             <td>
                                                 <div class="d-flex justify-content-center gap-2">
@@ -260,7 +308,7 @@
                     </div>
                     @endforeach
 
-                    <!-- Pagination untuk Titipan -->
+                    <!-- Improved Pagination untuk Titipan -->
                     @if($dataTitipan->hasPages())
                     <div class="d-flex justify-content-center mt-4">
                         <nav aria-label="Page navigation Titipan">
@@ -275,8 +323,45 @@
                                     </li>
                                 @endif
 
-                                @foreach ($dataTitipan->getUrlRange(1, $dataTitipan->lastPage()) as $page => $url)
-                                    @if ($page == $dataTitipan->currentPage())
+                                @php
+                                    $currentPage = $dataTitipan->currentPage();
+                                    $lastPage = $dataTitipan->lastPage();
+                                    $start = max(1, $currentPage - 2);
+                                    $end = min($lastPage, $currentPage + 2);
+
+                                    // Always show first page
+                                    if ($start > 1) {
+                                        $showFirst = true;
+                                        $showFirstDots = $start > 2;
+                                    } else {
+                                        $showFirst = false;
+                                        $showFirstDots = false;
+                                    }
+
+                                    // Always show last page
+                                    if ($end < $lastPage) {
+                                        $showLast = true;
+                                        $showLastDots = $end < $lastPage - 1;
+                                    } else {
+                                        $showLast = false;
+                                        $showLastDots = false;
+                                    }
+                                @endphp
+
+                                @if($showFirst)
+                                    <li class="page-item">
+                                        <a class="page-link" href="{{ $dataTitipan->appends(array_merge(request()->input(), ['tab' => 'titipan']))->url(1) }}">1</a>
+                                    </li>
+                                @endif
+
+                                @if($showFirstDots)
+                                    <li class="page-item disabled">
+                                        <span class="page-link">...</span>
+                                    </li>
+                                @endif
+
+                                @for ($page = $start; $page <= $end; $page++)
+                                    @if ($page == $currentPage)
                                         <li class="page-item active">
                                             <span class="page-link">{{ $page }}</span>
                                         </li>
@@ -285,7 +370,19 @@
                                             <a class="page-link" href="{{ $dataTitipan->appends(array_merge(request()->input(), ['tab' => 'titipan']))->url($page) }}">{{ $page }}</a>
                                         </li>
                                     @endif
-                                @endforeach
+                                @endfor
+
+                                @if($showLastDots)
+                                    <li class="page-item disabled">
+                                        <span class="page-link">...</span>
+                                    </li>
+                                @endif
+
+                                @if($showLast)
+                                    <li class="page-item">
+                                        <a class="page-link" href="{{ $dataTitipan->appends(array_merge(request()->input(), ['tab' => 'titipan']))->url($lastPage) }}">{{ $lastPage }}</a>
+                                    </li>
+                                @endif
 
                                 @if ($dataTitipan->hasMorePages())
                                     <li class="page-item">
