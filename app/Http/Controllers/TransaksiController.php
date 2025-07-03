@@ -16,21 +16,29 @@ class TransaksiController extends Controller
 {
     $user = auth()->user();
 
+    // Debug: Cek apakah user memiliki tossa_id
+    if (!$user->id_tossa) {
+        return redirect()->back()->with('error', 'Tossa ID tidak ditemukan');
+    }
+
     $products = Stocks::with(['product', 'newStock' => function($query) {
-        $query->whereDate('created_at', Carbon::today());
+        $query->whereDate('created_at', Carbon::today())
+              ->orderBy('created_at', 'desc');
     }])
     ->where('tossa_id', $user->id_tossa)
     ->get();
 
+    // Debug: Cek total produk
+    logger('Total products found: ' . $products->count());
+
     // Buat konstanta data stok hari ini
     $stokHariIni = [];
-    foreach ($products as $product) {
-        $stokHariIni[$product->id] = $product->newStock->first()->quantity_added ?? 0;
-    }
-
     $latestAddedStocks = [];
+
     foreach ($products as $product) {
-        $latestAddedStocks[$product->id] = $product->newStock->first()->quantity_added ?? 0;
+        $todayStock = $product->newStock->first();
+        $stokHariIni[$product->id] = $todayStock ? $todayStock->quantity_added : 0;
+        $latestAddedStocks[$product->id] = $todayStock ? $todayStock->quantity_added : 0;
     }
 
     // Definisikan kategori yang valid
@@ -40,19 +48,36 @@ class TransaksiController extends Controller
     // Grouping produk berdasarkan kategori dan jenis
     $productsByCategory = [];
     $categoryCount = [];
+    $debugInfo = []; // Untuk debugging
 
     foreach ($products as $product) {
-        $category = strtolower(trim($product->product->category));
-        $jenis = strtolower(trim($product->product->jenis));
+        // Debug: Cek apakah relasi product ada
+        if (!$product->product) {
+            logger('Product relation not found for stock ID: ' . $product->id);
+            continue;
+        }
+
+        $category = strtolower(trim($product->product->category ?? ''));
+        $jenis = strtolower(trim($product->product->jenis ?? ''));
+
+        // Debug: Log kategori dan jenis
+        $debugInfo[] = [
+            'product_id' => $product->product->id,
+            'name' => $product->product->name,
+            'category' => $category,
+            'jenis' => $jenis,
+            'original_category' => $product->product->category,
+            'original_jenis' => $product->product->jenis
+        ];
 
         // Validasi kategori dan jenis
         if (!in_array($category, $validCategories) || !in_array($jenis, $validJenis)) {
-            // Skip produk yang tidak sesuai kategori/jenis atau masukkan ke kategori 'lainnya'
+            logger('Invalid category or jenis: ' . $category . ' - ' . $jenis);
             continue;
         }
 
         // Buat key berdasarkan kategori dan jenis
-        $key = $jenis . '_' . $category  ;
+        $key = $jenis . '_' . $category;
 
         if (!isset($productsByCategory[$key])) {
             $productsByCategory[$key] = [];
@@ -61,6 +86,12 @@ class TransaksiController extends Controller
         $productsByCategory[$key][] = $product;
     }
 
+    // Debug: Log hasil grouping
+    logger('Debug info for products:', $debugInfo);
+    logger('Products by category:', array_map(function($items) {
+        return count($items);
+    }, $productsByCategory));
+
     // Hitung jumlah produk per kategori
     foreach ($productsByCategory as $key => $items) {
         $categoryCount[$key] = count($items);
@@ -68,12 +99,12 @@ class TransaksiController extends Controller
 
     // Pastikan semua kategori yang diperlukan tersedia
     $requiredCategories = [
-        'sayur_beli',
-        'sayur_titipan',
-        'buah_beli',
-        'buah_titipan',
-        'garingan_beli',
-        'garingan_titipan'
+        'beli_sayur',
+        'titipan_sayur',
+        'beli_buah',
+        'titipan_buah',
+        'beli_garingan',
+        'titipan_garingan'
     ];
 
     foreach ($requiredCategories as $category) {
