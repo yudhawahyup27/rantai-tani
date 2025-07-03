@@ -12,7 +12,7 @@ use Illuminate\Http\Request;
 
 class TransaksiController extends Controller
 {
-   public function index()
+public function index()
 {
     $user = auth()->user();
 
@@ -41,11 +41,11 @@ class TransaksiController extends Controller
         $latestAddedStocks[$product->id] = $todayStock ? $todayStock->quantity_added : 0;
     }
 
-    // Definisikan kategori yang valid
-    $validCategories = ['sayur', 'buah', 'garingan'];
-    $validJenis = ['beli', 'titipan'];
+    // Definisikan jenis dan kategori yang valid
+    $validJenis = ['sayur', 'buah', 'garingan'];
+    $validCategories = ['beli', 'titipan'];
 
-    // Grouping produk berdasarkan kategori dan jenis
+    // Grouping produk berdasarkan jenis dan kategori
     $productsByCategory = [];
     $categoryCount = [];
     $debugInfo = []; // Untuk debugging
@@ -57,60 +57,66 @@ class TransaksiController extends Controller
             continue;
         }
 
-        $category = strtolower(trim($product->product->category ?? ''));
         $jenis = strtolower(trim($product->product->jenis ?? ''));
+        $category = strtolower(trim($product->product->category ?? ''));
 
-        // Debug: Log kategori dan jenis
+        // Debug: Log jenis dan kategori
         $debugInfo[] = [
             'product_id' => $product->product->id,
             'name' => $product->product->name,
-            'category' => $category,
             'jenis' => $jenis,
-            'original_category' => $product->product->category,
-            'original_jenis' => $product->product->jenis
+            'category' => $category,
+            'original_jenis' => $product->product->jenis,
+            'original_category' => $product->product->category
         ];
 
-        // Validasi kategori dan jenis
-        if (!in_array($category, $validCategories) || !in_array($jenis, $validJenis)) {
-            logger('Invalid category or jenis: ' . $category . ' - ' . $jenis);
+        // Validasi jenis dan kategori
+        if (!in_array($jenis, $validJenis) || !in_array($category, $validCategories)) {
+            logger('Invalid jenis or category: ' . $jenis . ' - ' . $category);
             continue;
         }
 
-        // Buat key berdasarkan kategori dan jenis
-        $key = $jenis . '_' . $category;
-
-        if (!isset($productsByCategory[$key])) {
-            $productsByCategory[$key] = [];
+        // Buat struktur array berdasarkan jenis dan kategori
+        if (!isset($productsByCategory[$jenis])) {
+            $productsByCategory[$jenis] = [];
         }
 
-        $productsByCategory[$key][] = $product;
+        if (!isset($productsByCategory[$jenis][$category])) {
+            $productsByCategory[$jenis][$category] = [];
+        }
+
+        $productsByCategory[$jenis][$category][] = $product;
     }
 
     // Debug: Log hasil grouping
     logger('Debug info for products:', $debugInfo);
-    logger('Products by category:', array_map(function($items) {
-        return count($items);
-    }, $productsByCategory));
-
-    // Hitung jumlah produk per kategori
-    foreach ($productsByCategory as $key => $items) {
-        $categoryCount[$key] = count($items);
+    foreach ($productsByCategory as $jenis => $categories) {
+        foreach ($categories as $category => $items) {
+            logger("Products in {$jenis} - {$category}: " . count($items));
+        }
     }
 
-    // Pastikan semua kategori yang diperlukan tersedia
-    $requiredCategories = [
-        'beli_sayur',
-        'titipan_sayur',
-        'beli_buah',
-        'titipan_buah',
-        'beli_garingan',
-        'titipan_garingan'
-    ];
+    // Hitung jumlah produk per jenis dan kategori
+    foreach ($productsByCategory as $jenis => $categories) {
+        foreach ($categories as $category => $items) {
+            $categoryCount[$jenis][$category] = count($items);
+        }
+    }
 
-    foreach ($requiredCategories as $category) {
-        if (!isset($productsByCategory[$category])) {
-            $productsByCategory[$category] = [];
-            $categoryCount[$category] = 0;
+    // Pastikan semua jenis dan kategori yang diperlukan tersedia
+    $requiredJenis = ['sayur', 'buah', 'garingan'];
+    $requiredCategories = ['beli', 'titipan'];
+
+    foreach ($requiredJenis as $jenis) {
+        if (!isset($productsByCategory[$jenis])) {
+            $productsByCategory[$jenis] = [];
+        }
+
+        foreach ($requiredCategories as $category) {
+            if (!isset($productsByCategory[$jenis][$category])) {
+                $productsByCategory[$jenis][$category] = [];
+                $categoryCount[$jenis][$category] = 0;
+            }
         }
     }
 

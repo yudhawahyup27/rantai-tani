@@ -84,6 +84,15 @@
         </div>
     @endif
 
+    {{-- Debug Info (hapus setelah testing) --}}
+    @if(config('app.debug'))
+        <div class="alert alert-info">
+            <strong>Debug Info:</strong><br>
+            Total products: {{ $products->count() }}<br>
+            Category counts: {{ json_encode($categoryCount) }}
+        </div>
+    @endif
+
     {{-- Card --}}
     <div class="card shadow">
         <div class="card-header d-flex justify-content-between">
@@ -96,37 +105,37 @@
                 <li class="nav-item" role="presentation">
                     <button class="nav-link active" id="sayur-beli-tab" data-bs-toggle="tab" data-bs-target="#sayur-beli" type="button" role="tab">
                         Sayur Beli
-                        <span class="badge-count">{{ $categoryCount['sayur_beli'] ?? 0 }}</span>
+                        <span class="badge-count">{{ $categoryCount['sayur']['beli'] ?? 0 }}</span>
                     </button>
                 </li>
                 <li class="nav-item" role="presentation">
                     <button class="nav-link" id="sayur-titipan-tab" data-bs-toggle="tab" data-bs-target="#sayur-titipan" type="button" role="tab">
                         Sayur Titipan
-                        <span class="badge-count">{{ $categoryCount['sayur_titipan'] ?? 0 }}</span>
+                        <span class="badge-count">{{ $categoryCount['sayur']['titipan'] ?? 0 }}</span>
                     </button>
                 </li>
                 <li class="nav-item" role="presentation">
                     <button class="nav-link" id="buah-beli-tab" data-bs-toggle="tab" data-bs-target="#buah-beli" type="button" role="tab">
                         Buah Beli
-                        <span class="badge-count">{{ $categoryCount['buah_beli'] ?? 0 }}</span>
+                        <span class="badge-count">{{ $categoryCount['buah']['beli'] ?? 0 }}</span>
                     </button>
                 </li>
                 <li class="nav-item" role="presentation">
                     <button class="nav-link" id="buah-titipan-tab" data-bs-toggle="tab" data-bs-target="#buah-titipan" type="button" role="tab">
                         Buah Titipan
-                        <span class="badge-count">{{ $categoryCount['buah_titipan'] ?? 0 }}</span>
+                        <span class="badge-count">{{ $categoryCount['buah']['titipan'] ?? 0 }}</span>
                     </button>
                 </li>
                 <li class="nav-item" role="presentation">
                     <button class="nav-link" id="garingan-beli-tab" data-bs-toggle="tab" data-bs-target="#garingan-beli" type="button" role="tab">
                         Garingan Beli
-                        <span class="badge-count">{{ $categoryCount['garingan_beli'] ?? 0 }}</span>
+                        <span class="badge-count">{{ $categoryCount['garingan']['beli'] ?? 0 }}</span>
                     </button>
                 </li>
                 <li class="nav-item" role="presentation">
                     <button class="nav-link" id="garingan-titipan-tab" data-bs-toggle="tab" data-bs-target="#garingan-titipan" type="button" role="tab">
                         Garingan Titipan
-                        <span class="badge-count">{{ $categoryCount['garingan_titipan'] ?? 0 }}</span>
+                        <span class="badge-count">{{ $categoryCount['garingan']['titipan'] ?? 0 }}</span>
                     </button>
                 </li>
             </ul>
@@ -136,7 +145,7 @@
                 {{-- Sayur Beli --}}
                 <div class="tab-pane fade show active" id="sayur-beli" role="tabpanel">
                     <div class="row g-3">
-                        @forelse ($productsByCategory['sayur_beli'] ?? [] as $item)
+                        @forelse ($productsByCategory['sayur']['beli'] ?? [] as $item)
                             <div class="col-md-6">
                                 <div class="card h-100 shadow-sm">
                                     <div class="card-body d-flex align-items-center">
@@ -173,7 +182,7 @@
                 {{-- Sayur Titipan --}}
                 <div class="tab-pane fade" id="sayur-titipan" role="tabpanel">
                     <div class="row g-3">
-                        @forelse ($productsByCategory['sayur_titipan'] ?? [] as $item)
+                        @forelse ($productsByCategory['sayur']['titipan'] ?? [] as $item)
                             <div class="col-md-6">
                                 <div class="card h-100 shadow-sm">
                                     <div class="card-body d-flex align-items-center">
@@ -210,7 +219,7 @@
                 {{-- Buah Beli --}}
                 <div class="tab-pane fade" id="buah-beli" role="tabpanel">
                     <div class="row g-3">
-                        @forelse ($productsByCategory['buah_beli'] ?? [] as $item)
+                        @forelse ($productsByCategory['buah']['beli'] ?? [] as $item)
                             <div class="col-md-6">
                                 <div class="card h-100 shadow-sm">
                                     <div class="card-body d-flex align-items-center">
@@ -247,7 +256,7 @@
                 {{-- Buah Titipan --}}
                 <div class="tab-pane fade" id="buah-titipan" role="tabpanel">
                     <div class="row g-3">
-                        @forelse ($productsByCategory['buah_titipan'] ?? [] as $item)
+                        @forelse ($productsByCategory['buah']['titipan'] ?? [] as $item)
                             <div class="col-md-6">
                                 <div class="card h-100 shadow-sm">
                                     <div class="card-body d-flex align-items-center">
@@ -284,7 +293,7 @@
                 {{-- Garingan Beli --}}
                 <div class="tab-pane fade" id="garingan-beli" role="tabpanel">
                     <div class="row g-3">
-                        @forelse ($productsByCategory['garingan_beli'] ?? [] as $item)
+                        @forelse ($productsByCategory['garingan']['beli'] ?? [] as $item)
                             <div class="col-md-6">
                                 <div class="card h-100 shadow-sm">
                                     <div class="card-body d-flex align-items-center">
@@ -321,7 +330,7 @@
                 {{-- Garingan Titipan --}}
                 <div class="tab-pane fade" id="garingan-titipan" role="tabpanel">
                     <div class="row g-3">
-                        @forelse ($productsByCategory['garingan_titipan'] ?? [] as $item)
+                        @forelse ($productsByCategory['garingan']['titipan'] ?? [] as $item)
                             <div class="col-md-6">
                                 <div class="card h-100 shadow-sm">
                                     <div class="card-body d-flex align-items-center">
@@ -417,6 +426,10 @@
                             <tr>
                                 <th>Nama Produk</th>
                                 <td>{{ $item->product->name }}</td>
+                            </tr>
+                            <tr>
+                                <th>Jenis</th>
+                                <td>{{ $item->product->jenis }}</td>
                             </tr>
                             <tr>
                                 <th>Kategori</th>
