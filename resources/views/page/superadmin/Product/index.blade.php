@@ -154,8 +154,8 @@
                                 @php
                                     $currentPage = $dataBeli->currentPage();
                                     $lastPage = $dataBeli->lastPage();
-                                    $start = max(1, $currentPage - 2);
-                                    $end = min($lastPage, $currentPage + 2);
+                                    $start = max(1, $currentPage - 1);
+                                    $end = min($lastPage, $currentPage + 1);
 
                                     // Always show first page
                                     if ($start > 1) {
@@ -255,7 +255,6 @@
                                             <th>Price Buy</th>
                                             <th>Price Sell</th>
                                             <th>Category</th>
-                                            <th>Pemilik</th>
                                             <th>Satuan</th>
                                             <th>Laba</th>
                                             <th>Harga Rekomentasi</th>
@@ -284,7 +283,6 @@
                                             <td>Rp. {{ number_format($sn->price, 0, ',', '.') }}</td>
                                             <td>Rp. {{ number_format($sn->price_sell, 0, ',', '.') }}</td>
                                             <td>{{ $sn->category ?? '-' }}</td>
-                                            <td>{{ $sn->pemilik ?? '-' }}</td>
                                             <td>{{ $sn->satuan->nama_satuan ?? '-' }}</td>
                                             <td>Rp. {{ number_format($sn->laba, 0, ',', '.') }}</td>
                                             <td>Rp. {{ number_format($sn->harga_rekomendasi, 0, ',', '.') }}</td>
@@ -328,8 +326,8 @@
                                 @php
                                     $currentPage = $dataTitipan->currentPage();
                                     $lastPage = $dataTitipan->lastPage();
-                                    $start = max(1, $currentPage - 2);
-                                    $end = min($lastPage, $currentPage + 2);
+                                    $start = max(1, $currentPage - 1);
+                                    $end = min($lastPage, $currentPage + 1);
 
                                     // Always show first page
                                     if ($start > 1) {
