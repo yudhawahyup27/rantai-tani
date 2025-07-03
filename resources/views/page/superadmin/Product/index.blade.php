@@ -81,11 +81,11 @@
                                             <th>Name</th>
                                             <th>Image</th>
                                             <th>Price Buy</th>
+                                            <th>Laba</th>
                                             <th>Price Sell</th>
+                                            <th>harga rekomendasi</th>
                                             <th>Category</th>
                                             <th>Satuan</th>
-                                            <th>Harga Rekomentasi</th>
-                                            <th>Laba</th>
                                             <th>Catatan</th>
                                             <th>Di Update</th>
                                             <th>Aksi</th>
@@ -109,11 +109,11 @@
                                                 @endif
                                             </td>
                                             <td>Rp. {{ number_format($sn->price, 0, ',', '.') }}</td>
+                                            <td>Rp. {{ number_format($sn->laba, 0, ',', '.') }}</td>
                                             <td>Rp. {{ number_format($sn->price_sell, 0, ',', '.') }}</td>
+                                            <td>Rp. {{ number_format($sn->harga_rekomendasi, 0, ',', '.') }}</td>
                                             <td>{{ $sn->category ?? '-' }}</td>
                                             <td>{{ $sn->satuan->nama_satuan ?? '-' }}</td>
-                                            <td>Rp. {{ number_format($sn->harga_rekomendasi, 0, ',', '.') }}</td>
-                                            <td>Rp. {{ number_format($sn->laba, 0, ',', '.') }}</td>
                                             <td>{{ $sn->catatan ?? '-' }}</td>
                                             <td>{{ $sn->updated_at ? $sn->updated_at->format('d-m-Y H:i') : '-' }}</td>
                                             <td>
@@ -253,12 +253,12 @@
                                             <th>Name</th>
                                             <th>Image</th>
                                             <th>Price Buy</th>
+                                            <th>Laba</th>
                                             <th>Price Sell</th>
+                                            <th>Harga rekomendasi</th>
                                             <th>Category</th>
                                             <th>Pemilik</th>
                                             <th>Satuan</th>
-                                            <th>Laba</th>
-                                            <th>Harga Rekomentasi</th>
                                             <th>Catatan</th>
                                             <th>Di Update</th>
                                             <th>Aksi</th>
@@ -282,12 +282,12 @@
                                                 @endif
                                             </td>
                                             <td>Rp. {{ number_format($sn->price, 0, ',', '.') }}</td>
+                                            <td>Rp. {{ number_format($sn->laba, 0, ',', '.') }}</td>
                                             <td>Rp. {{ number_format($sn->price_sell, 0, ',', '.') }}</td>
+                                            <td>Rp. {{ number_format($sn->harga_rekomendasi, 0, ',', '.') }}</td>
                                             <td>{{ $sn->category ?? '-' }}</td>
                                             <td>{{ $sn->pemilik ?? '-' }}</td>
                                             <td>{{ $sn->satuan->nama_satuan ?? '-' }}</td>
-                                            <td>Rp. {{ number_format($sn->laba, 0, ',', '.') }}</td>
-                                            <td>Rp. {{ number_format($sn->harga_rekomendasi, 0, ',', '.') }}</td>
                                             <td>{{ $sn->catatan ?? '-' }}</td>
                                             <td>{{ $sn->updated_at ? $sn->updated_at->format('d-m-Y H:i') : '-' }}</td>
                                             <td>
