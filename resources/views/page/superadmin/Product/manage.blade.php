@@ -22,12 +22,7 @@
                   @error('name') <div class="invalid-feedback">{{ $message }}</div> @enderror
               </div>
 
-              <div class="mb-3">
-                  <label for="price">Price</label>
-                  <input type="number" step="0.01" placeholder="Harga Beli" name="price" class="form-control @error('price') is-invalid @enderror"
-                         value="{{ old('price', $data->price ?? '') }}" required>
-                  @error('price') <div class="invalid-feedback">{{ $message }}</div> @enderror
-              </div>
+
             <div class="mb-3 d-none " id="pemilik-wrapper">
             <label for="pemilik">Nama Pemilik Titipan</label>
         <input type="text" name="pemilik" placeholder="Masukan nama pemilik titipan"
@@ -35,6 +30,20 @@
            value="{{ old('pemilik', $data->pemilik ?? '') }}">
     @error('pemilik') <div class="invalid-feedback">{{ $message }}</div> @enderror
         </div>
+          <div class="mb-3">
+                  <label for="price">Price</label>
+                  <input type="number" step="0.01" placeholder="Harga Beli" name="price" class="form-control @error('price') is-invalid @enderror"
+                         value="{{ old('price', $data->price ?? '') }}" required>
+                  @error('price') <div class="invalid-feedback">{{ $message }}</div> @enderror
+              </div>
+               <div class="mb-3">
+
+                
+
+                    <label for="laba">Laba</label>
+                    <input type="number" step="0.01" name="laba" id="laba" class="form-control @error('laba') is-invalid @enderror" value="{{ old('laba', $data->laba ?? '') }}" required>
+                    @error('laba') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                </div>
               <div class="mb-3">
                   <label for="price_sell">Price Sell</label>
                   <input type="number" step="0.01" placeholder="Harga Jual" name="price_sell" class="form-control @error('price_sell') is-invalid @enderror"
@@ -42,13 +51,14 @@
                   @error('price_sell') <div class="invalid-feedback">{{ $message }}</div> @enderror
               </div>
 
-              <div class="mb-3">
 
-                    <label for="laba">Laba</label>
-                    <input type="number" step="0.01" name="laba" id="laba" class="form-control @error('laba') is-invalid @enderror" value="{{ old('laba', $data->laba ?? '') }}" required>
-                    @error('laba') <div class="invalid-feedback">{{ $message }}</div> @enderror
-                </div>
 
+                 <label for="harga_rekomendasi">Harga Rekomendasi</label>
+    <input type="number" step="0.01" name="harga_rekomendasi"
+        class="form-control @error('harga_rekomendasi') is-invalid @enderror"
+        value="{{ old('harga_rekomendasi', $data->harga_rekomendasi ?? '') }}">
+    @error('harga_rekomendasi') <div class="invalid-feedback">{{ $message }}</div> @enderror
+</div>
 
               <div class="mb-3">
                   <label for="category">Category</label>
@@ -81,12 +91,7 @@
               </div>
 
               <div class="mb-3">
-    <label for="harga_rekomendasi">Harga Rekomendasi</label>
-    <input type="number" step="0.01" name="harga_rekomendasi"
-        class="form-control @error('harga_rekomendasi') is-invalid @enderror"
-        value="{{ old('harga_rekomendasi', $data->harga_rekomendasi ?? '') }}">
-    @error('harga_rekomendasi') <div class="invalid-feedback">{{ $message }}</div> @enderror
-</div>
+
 
 <div class="mb-3">
     <label for="catatan">Catatan</label>
