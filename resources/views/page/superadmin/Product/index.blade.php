@@ -255,6 +255,7 @@
                                             <th>Price Buy</th>
                                             <th>Price Sell</th>
                                             <th>Category</th>
+                                            <th>Pemilik</th>
                                             <th>Satuan</th>
                                             <th>Laba</th>
                                             <th>Harga Rekomentasi</th>
@@ -283,6 +284,7 @@
                                             <td>Rp. {{ number_format($sn->price, 0, ',', '.') }}</td>
                                             <td>Rp. {{ number_format($sn->price_sell, 0, ',', '.') }}</td>
                                             <td>{{ $sn->category ?? '-' }}</td>
+                                            <td>{{ $sn->pemilik ?? '-' }}</td>
                                             <td>{{ $sn->satuan->nama_satuan ?? '-' }}</td>
                                             <td>Rp. {{ number_format($sn->laba, 0, ',', '.') }}</td>
                                             <td>Rp. {{ number_format($sn->harga_rekomendasi, 0, ',', '.') }}</td>
