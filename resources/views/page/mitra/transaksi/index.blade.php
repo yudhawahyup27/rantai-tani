@@ -67,7 +67,7 @@
                                     <p class="mb-1">Dagangan Dibawa: <strong>{{ $item->quantity }}</strong></p>
                                     <p class="mb-1">Shift: {{ $shift ?? '-' }}</p>
                                     <p class="mb-1">Kulakan Pagi: {{ $latestAddedStocks[$item->id] ?? 0 }}</p>
-                                    <p class="mb-2">Harga Jual: <strong>Rp{{ number_format($item->product->price_sell, 0, ',', '.') }}</strong></p>
+                                    <p class="mb-2">Harga Beli: <strong>Rp{{ number_format($item->product->price_sell, 0, ',', '.') }}</strong></p>
                                     <button type="button" class="btn btn-sm btn-primary me-1" data-bs-toggle="modal" data-bs-target="#stokModal{{ $item->id }}">
                                         Update Stok
                                     </button>
@@ -135,8 +135,12 @@
                                             <td>{{ $item->product->satuan->nama_satuan ?? '-' }}</td>
                                         </tr>
                                         <tr>
-                                            <th>Harga Jual</th>
+                                            <th>Harga Beli</th>
                                             <td>Rp{{ number_format($item->product->price_sell, 0, ',', '.') }}</td>
+                                        </tr>
+                                        <tr>
+                                            <th>Harga Rekomendasi</th>
+                                            <td>Rp{{ number_format($item->product->harga_rekomendasi, 0, ',', '.') }}</td>
                                         </tr>
                                         <tr>
                                             <th>Total Jual x Quantity</th>
