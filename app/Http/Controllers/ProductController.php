@@ -17,7 +17,7 @@ class ProductController extends Controller
     $search = $request->input('search');
     $jenis = $request->input('jenis', 'all');
     $sort = $request->input('sort', 'asc');
-    $perPage = $request->input('per_page', 5);
+    $perPage = $request->input('per_page', 25);
 
     // Query untuk Product Beli
     $dataBeli = Product::with('satuan')

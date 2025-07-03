@@ -24,7 +24,6 @@
                     <div class="d-flex">
                         <input style="width: 200px;" type="text" name="search" class="form-control me-2" placeholder="Cari..." value="{{ request('search') }}">
                         <select name="per_page" class="form-select me-2" onchange="this.form.submit()">
-                            <option value="5" {{ request('per_page') == 5 ? 'selected' : '' }}>5</option>
                             <option value="25" {{ request('per_page') == 25 ? 'selected' : '' }}>25</option>
                             <option value="100" {{ request('per_page') == 100 ? 'selected' : '' }}>100</option>
                         </select>
