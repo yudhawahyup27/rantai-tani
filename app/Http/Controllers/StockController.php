@@ -34,22 +34,32 @@ public function store(Request $request)
         'tossa_id' => 'required|exists:tossas,id',
         'products' => 'required|array|min:1',
         'products.*.product_id' => 'required|exists:products,id',
-        'products.*.quantity' => 'required|numeric|min:0',
+        'products.*.quantity' => 'required',
     ]);
 
     foreach ($request->products as $product) {
-        $exists = Stocks::where('product_id', $product['product_id'])
+        $product_id = $product['product_id'];
+        $quantityRaw = $product['quantity'];
+
+        // Convert koma ke titik untuk desimal
+        $quantity = floatval(str_replace(',', '.', $quantityRaw));
+
+        if ($quantity < 0) {
+            return back()->withErrors(['Jumlah stok tidak boleh negatif.'])->withInput();
+        }
+
+        // Cegah duplikat
+        $exists = Stocks::where('product_id', $product_id)
                         ->where('tossa_id', $request->tossa_id)
                         ->exists();
-
         if ($exists) {
-            return back()->withErrors(['Produk ' . $product['product_id'] . ' sudah ada di stok network ini.'])->withInput();
+            return back()->withErrors(['Produk sudah ada di jaringan ini.'])->withInput();
         }
 
         Stocks::create([
-            'product_id' => $product['product_id'],
+            'product_id' => $product_id,
             'tossa_id' => $request->tossa_id,
-            'quantity' => $product['quantity'],
+            'quantity' => $quantity,
         ]);
     }
 
@@ -63,14 +73,25 @@ public function update(Request $request, $id)
     $request->validate([
         'product_id' => 'required|exists:products,id',
         'tossa_id' => 'required|exists:tossas,id',
-        'quantity' => 'required|numeric|min:0',
-        'quantity_new' => 'nullable|numeric|min:0',
+        'quantity' => 'required',
+        'quantity_new' => 'nullable',
     ]);
 
     $stock = Stocks::findOrFail($id);
 
-    $quantityNew = $request->input('quantity_new');
-    if ($quantityNew && $quantityNew > 0) {
+    $quantityRaw = $request->input('quantity');
+    $quantityNewRaw = $request->input('quantity_new');
+
+    // Konversi format angka (koma ke titik)
+    $quantity = floatval(str_replace(',', '.', $quantityRaw));
+    $quantityNew = floatval(str_replace(',', '.', $quantityNewRaw));
+
+    if ($quantity < 0 || $quantityNew < 0) {
+        return back()->withErrors(['Jumlah stok tidak boleh negatif.'])->withInput();
+    }
+
+    // Tambahkan stok baru ke total (jika ada)
+    if ($quantityNew > 0) {
         $stock->quantity += $quantityNew;
 
         newStock::create([
@@ -80,13 +101,12 @@ public function update(Request $request, $id)
     }
 
     $stock->quantity_new = 0;
-    $stock->product_id = $request->input('product_id');
-    $stock->tossa_id = $request->input('tossa_id');
-    $stock->quantity = $request->input('quantity');
+    $stock->quantity = $quantity;
     $stock->save();
 
     return redirect()->route('admin.stock')->with('success', 'Stok berhasil diperbarui.');
 }
+
 
 
 
