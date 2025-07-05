@@ -57,7 +57,7 @@
                             </div>
                             <div class="col-md-4">
                                 <label>Jumlah</label>
-                                <input type="number" name="products[0][quantity]" class="form-control" required>
+                                <input type="text" name="products[0][quantity]" class="form-control" required>
                             </div>
                             <div class="col-md-2 d-flex align-items-end">
                                 <button type="button" class="btn btn-danger remove-row">Hapus</button>
@@ -81,12 +81,12 @@
 
                     <div class="mb-3">
                         <label for="quantity_new" class="form-label">Jumlah Stok Baru</label>
-                        <input type="number" name="quantity_new" class="form-control" value="{{ old('quantity_new', $data->quantity_new) }}">
+                        <input type="text" name="quantity_new" class="form-control" value="{{ old('quantity_new', $data->quantity_new) }}">
                     </div>
 
                     <div class="mb-3">
                         <label for="quantity" class="form-label">Jumlah Total Stok</label>
-                        <input type="number" name="quantity" class="form-control" value="{{ old('quantity', $data->quantity) }}">
+                        <input type="text" name="quantity" class="form-control" value="{{ old('quantity', $data->quantity) }}">
                         <small class="text-danger">*Isi jika ingin mengoreksi jumlah stok total</small>
                     </div>
                 @endif
