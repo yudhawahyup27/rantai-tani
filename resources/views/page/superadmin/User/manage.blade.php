@@ -21,6 +21,7 @@
                         <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
                 </div>
+
                 <div class="mb-3">
                     <label for="telepon">Telepon</label>
                     <input type="text" name="telepon" class="form-control @error('telepon') is-invalid @enderror" value="{{ old('telepon', $data->telepon) }}" required>
@@ -29,9 +30,14 @@
                     @enderror
                 </div>
 
-                <div class="mb-3">
+                <div class="mb-3 position-relative">
                     <label for="password">Password {{ $data->id ? '(Kosongkan jika tidak diubah)' : '' }}</label>
-                    <input type="password" name="password" class="form-control @error('password') is-invalid @enderror" {{ $data->id ? '' : 'required' }}>
+                    <div class="input-group">
+                        <input type="password" name="password" id="passwordInput" class="form-control @error('password') is-invalid @enderror" {{ $data->id ? '' : 'required' }}>
+                        <span class="input-group-text" style="cursor: pointer;" onclick="togglePassword()">
+                            <i class="bi bi-eye" id="toggleIcon"></i>
+                        </span>
+                    </div>
                     @error('password')
                         <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
@@ -87,4 +93,23 @@
         </div>
     </div>
 </div>
+@endsection
+
+@section('scripts')
+<script>
+function togglePassword() {
+    const input = document.getElementById('passwordInput');
+    const icon = document.getElementById('toggleIcon');
+
+    if (input.type === 'password') {
+        input.type = 'text';
+        icon.classList.remove('bi-eye');
+        icon.classList.add('bi-eye-slash');
+    } else {
+        input.type = 'password';
+        icon.classList.remove('bi-eye-slash');
+        icon.classList.add('bi-eye');
+    }
+}
+</script>
 @endsection
