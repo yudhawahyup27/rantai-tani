@@ -1,19 +1,19 @@
 @php
 use Illuminate\Support\Facades\Request;
+
+$isActiveMaster = Request::routeIs('admin.supply','admin.product', 'admin.shift','admin.saham');
+$isActiveInvestor = Request::routeIs('admin.investor', 'admin.takeover');
 @endphp
 
-@php
-    $isActiveMaster = Request::routeIs('admin.supply','admin.product', 'admin.shift','admin.saham');
-    $isActiveInvestor = Request::routeIs('admin.investor', 'admin.takeover');
-@endphp
-<aside class="sidenav bg-white navbar navbar-vertical navbar-expand-xs border-0 border-radius-xl my-3 fixed-start ms-4" id="sidenav-main">
+<aside class="sidenav bg-white navbar navbar-vertical navbar-expand-xs border-0 border-radius-xl fixed-start ms-4 vh-100" id="sidenav-main">
     <div class="sidenav-header">
         <a class="navbar-brand m-0" href="#">
             <span class="ms-1 font-weight-bold">Rantai Tani</span>
         </a>
     </div>
     <hr class="horizontal dark mt-0">
-    <div class="collapse navbar-collapse w-auto" id="sidenav-collapse-main">
+
+    <div class="collapse navbar-collapse w-auto overflow-auto h-100" id="sidenav-collapse-main">
         <ul class="navbar-nav">
             @if(auth()->check())
                 @if(auth()->user()->hasRole('administrator'))
@@ -36,7 +36,7 @@ use Illuminate\Support\Facades\Request;
                                 <span class="nav-link-text ms-1">Data Master</span>
                             </div>
                         </a>
-                        <div class="collapse  {{ $isActiveMaster ? 'show' : '' }}" id="dropdownMaster">
+                        <div class="collapse {{ $isActiveMaster ? 'show' : '' }}" id="dropdownMaster">
                             <ul class="nav ms-4">
                                 <li class="nav-item">
                                     <a class="nav-link {{ Request::routeIs('admin.supply') ? 'active' : '' }}" href="{{ route('admin.supply') }}">
@@ -62,10 +62,7 @@ use Illuminate\Support\Facades\Request;
                         </div>
                     </li>
 
-                    {{-- Dropdown Master End --}}
-
                     {{-- Dropdown Investor --}}
-
                     <li class="nav-item">
                         <a class="nav-link d-flex justify-content-between align-items-center" data-bs-toggle="collapse" href="#dropdownInvestor" role="button" aria-expanded="{{ $isActiveInvestor ? 'true' : 'false' }}" aria-controls="dropdownInvestor">
                             <div class="d-flex align-items-center">
@@ -75,7 +72,7 @@ use Illuminate\Support\Facades\Request;
                                 <span class="nav-link-text ms-1">Investor</span>
                             </div>
                         </a>
-                        <div class="collapse  {{ $isActiveInvestor ? 'show' : '' }}" id="dropdownInvestor">
+                        <div class="collapse {{ $isActiveInvestor ? 'show' : '' }}" id="dropdownInvestor">
                             <ul class="nav ms-4">
                                 <li class="nav-item">
                                     <a class="nav-link {{ Request::routeIs('admin.investor') ? 'active' : '' }}" href="{{ route('admin.investor') }}">
@@ -87,38 +84,35 @@ use Illuminate\Support\Facades\Request;
                                         <span class="nav-link-text">Manajemen Take Over</span>
                                     </a>
                                 </li>
-
                             </ul>
                         </div>
                     </li>
 
-
-                    {{-- Menu lainnya (non-master) --}}
+                    {{-- Menu lainnya --}}
                     <li class="nav-item">
-                            <a class="nav-link {{ Request::routeIs('admin.user') ? 'active' : '' }}" href="{{ route('admin.user') }}">
-                                <div class="icon icon-shape icon-sm border-radius-md text-center me-2 d-flex align-items-center justify-content-center">
-                                    <i class="ni ni-box-2 text-dark text-sm opacity-10"></i>
-                                </div>
-                                <span class="nav-link-text">Manajemen User</span>
-                            </a>
+                        <a class="nav-link {{ Request::routeIs('admin.user') ? 'active' : '' }}" href="{{ route('admin.user') }}">
+                            <div class="icon icon-shape icon-sm border-radius-md text-center me-2 d-flex align-items-center justify-content-center">
+                                <i class="ni ni-box-2 text-dark text-sm opacity-10"></i>
+                            </div>
+                            <span class="nav-link-text">Manajemen User</span>
+                        </a>
                     </li>
                     <li class="nav-item">
-                            <a class="nav-link {{ Request::routeIs('admin.stock') ? 'active' : '' }}" href="{{ route('admin.stock') }}">
-                                <div class="icon icon-shape icon-sm border-radius-md text-center me-2 d-flex align-items-center justify-content-center">
-                                    <i class="ni ni-box-2 text-dark text-sm opacity-10"></i>
-                                </div>
-                                <span class="nav-link-text">Manajemen Stock</span>
-                            </a>
+                        <a class="nav-link {{ Request::routeIs('admin.stock') ? 'active' : '' }}" href="{{ route('admin.stock') }}">
+                            <div class="icon icon-shape icon-sm border-radius-md text-center me-2 d-flex align-items-center justify-content-center">
+                                <i class="ni ni-box-2 text-dark text-sm opacity-10"></i>
+                            </div>
+                            <span class="nav-link-text">Manajemen Stock</span>
+                        </a>
                     </li>
                     <li class="nav-item">
-                            <a class="nav-link {{ Request::routeIs('admin.sewa.index') ? 'active' : '' }}" href="{{ route('admin.sewa.index') }}">
-                                <div class="icon icon-shape icon-sm border-radius-md text-center me-2 d-flex align-items-center justify-content-center">
-                                    <i class="ni ni-box-2 text-dark text-sm opacity-10"></i>
-                                </div>
-                                <span class="nav-link-text">Manajemen Sewa</span>
-                            </a>
+                        <a class="nav-link {{ Request::routeIs('admin.sewa.index') ? 'active' : '' }}" href="{{ route('admin.sewa.index') }}">
+                            <div class="icon icon-shape icon-sm border-radius-md text-center me-2 d-flex align-items-center justify-content-center">
+                                <i class="ni ni-box-2 text-dark text-sm opacity-10"></i>
+                            </div>
+                            <span class="nav-link-text">Manajemen Sewa</span>
+                        </a>
                     </li>
-
                 @endif
 
                 @if(auth()->user()->hasRole('mitra'))
