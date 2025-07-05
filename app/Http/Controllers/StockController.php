@@ -32,41 +32,25 @@ public function store(Request $request)
 {
     $request->validate([
         'tossa_id' => 'required|exists:tossas,id',
-        'products' => 'required|array',
+        'products' => 'required|array|min:1',
         'products.*.product_id' => 'required|exists:products,id',
-        'products.*.quantity' => 'required'
+        'products.*.quantity' => 'required|numeric|min:0',
     ]);
 
-    $errors = [];
-
-    foreach ($request->products as $item) {
-        $quantity = str_replace(',', '.', $item['quantity']);
-
-        if (!is_numeric($quantity)) {
-            $productName = \App\Models\Product::find($item['product_id'])->name ?? 'Produk';
-            $errors[] = "Jumlah stok untuk $productName tidak valid.";
-            continue;
-        }
-
-        $exists = \App\Models\Stocks::where('product_id', $item['product_id'])
-            ->where('tossa_id', $request->tossa_id)
-            ->exists();
+    foreach ($request->products as $product) {
+        $exists = Stocks::where('product_id', $product['product_id'])
+                        ->where('tossa_id', $request->tossa_id)
+                        ->exists();
 
         if ($exists) {
-            $productName = \App\Models\Product::find($item['product_id'])->name ?? 'Produk';
-            $errors[] = "Produk '$productName' sudah ada di jaringan supply.";
-            continue;
+            return back()->withErrors(['Produk ' . $product['product_id'] . ' sudah ada di stok network ini.'])->withInput();
         }
 
-        \App\Models\Stocks::create([
-            'product_id' => $item['product_id'],
-            'tossa_id'   => $request->tossa_id,
-            'quantity'   => $quantity,
+        Stocks::create([
+            'product_id' => $product['product_id'],
+            'tossa_id' => $request->tossa_id,
+            'quantity' => $product['quantity'],
         ]);
-    }
-
-    if (count($errors)) {
-        return redirect()->back()->withErrors($errors)->withInput();
     }
 
     return redirect()->route('admin.stock')->with('success', 'Stok berhasil ditambahkan.');
@@ -78,44 +62,32 @@ public function update(Request $request, $id)
 {
     $request->validate([
         'product_id' => 'required|exists:products,id',
-        'tossa_id'   => 'required|exists:tossas,id',
-        'quantity'   => 'nullable',
-        'quantity_new' => 'nullable',
+        'tossa_id' => 'required|exists:tossas,id',
+        'quantity' => 'required|numeric|min:0',
+        'quantity_new' => 'nullable|numeric|min:0',
     ]);
 
     $stock = Stocks::findOrFail($id);
 
-    // Handle desimal koma untuk quantity_new
-    $quantityNewRaw = $request->input('quantity_new', '0');
-    $quantityNew = floatval(str_replace(',', '.', $quantityNewRaw));
-
-    if ($quantityNew > 0) {
+    $quantityNew = $request->input('quantity_new');
+    if ($quantityNew && $quantityNew > 0) {
         $stock->quantity += $quantityNew;
 
-        // Simpan riwayat stok baru ke tabel new_stocks
         newStock::create([
-            'stock_id'       => $stock->id,
+            'stock_id' => $stock->id,
             'quantity_added' => $quantityNew,
         ]);
     }
 
-    // Reset quantity_new (hanya sebagai tampilan)
     $stock->quantity_new = 0;
-
-    // Optional: Update quantity jika diubah manual (support koma juga)
-    if ($request->filled('quantity')) {
-        $manualQty = floatval(str_replace(',', '.', $request->quantity));
-        $stock->quantity = $manualQty;
-    }
-
-    // Update relasi
     $stock->product_id = $request->input('product_id');
-    $stock->tossa_id   = $request->input('tossa_id');
-
+    $stock->tossa_id = $request->input('tossa_id');
+    $stock->quantity = $request->input('quantity');
     $stock->save();
 
     return redirect()->route('admin.stock')->with('success', 'Stok berhasil diperbarui.');
 }
+
 
 
             public function destroy (Request $request, $id)
