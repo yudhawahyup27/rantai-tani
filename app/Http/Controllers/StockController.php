@@ -34,7 +34,7 @@ public function store(Request $request)
         'tossa_id' => 'required|exists:tossas,id',
         'products' => 'required|array|min:1',
         'products.*.product_id' => 'required|exists:products,id',
-        'products.*.quantity' => 'required|numeric|min:0',
+        'products.*.quantity' => 'required',
     ]);
 
     $errors = [];
