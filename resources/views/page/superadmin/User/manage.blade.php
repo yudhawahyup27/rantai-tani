@@ -34,7 +34,7 @@
                     <label for="password">Password {{ $data->id ? '(Kosongkan jika tidak diubah)' : '' }}</label>
                     <div class="input-group">
                         <input type="password" name="password" id="passwordInput" class="form-control @error('password') is-invalid @enderror" {{ $data->id ? '' : 'required' }}>
-                        <span class="input-group-text btn btn-primary" style="cursor: pointer;" onclick="togglePassword()">
+                        <span class="input-group-text bg-primary" style="cursor: pointer;" onclick="togglePassword()">
                             <i class="fas fa-eye" id="toggleIcon"></i>
                         </span>
                     </div>
