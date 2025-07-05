@@ -34,8 +34,8 @@
                     <label for="password">Password {{ $data->id ? '(Kosongkan jika tidak diubah)' : '' }}</label>
                     <div class="input-group">
                         <input type="password" name="password" id="passwordInput" class="form-control @error('password') is-invalid @enderror" {{ $data->id ? '' : 'required' }}>
-                        <span class="input-group-text" style="cursor: pointer;" onclick="togglePassword()">
-                            <i class="bi bi-eye" id="toggleIcon"></i>
+                        <span class="input-group-text btn btn-primary" style="cursor: pointer;" onclick="togglePassword()">
+                            <i class="fas fa-eye" id="toggleIcon"></i>
                         </span>
                     </div>
                     @error('password')
@@ -103,12 +103,12 @@ function togglePassword() {
 
     if (input.type === 'password') {
         input.type = 'text';
-        icon.classList.remove('bi-eye');
-        icon.classList.add('bi-eye-slash');
+        icon.classList.remove(' fa-eye');   ');
+        icon.classList.add('fa-eye-slash');
     } else {
         input.type = 'password';
-        icon.classList.remove('bi-eye-slash');
-        icon.classList.add('bi-eye');
+        icon.classList.remove('fa-eye-slash');
+        icon.classList.add('fa-eye');
     }
 }
 </script>
