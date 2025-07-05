@@ -28,32 +28,42 @@ class StockController extends Controller
     return view('page.superadmin.Stocks.manage', compact('data','product', 'tossa'));
     }
 
-  public function store (Request $request)
+public function store(Request $request)
 {
-    // 1. Validasi input dasar
     $request->validate([
-        'product_id' => 'required',
-        // 'tossa_id' => 'required|unique:stocks,tossa_id', // Hapus unique di sini jika ingin unique kombinasi
-        'tossa_id'   => 'required', // Cukup required
-        // 'quantity'   => 'required|',
+        'tossa_id' => 'required|exists:tossas,id',
+        'products' => 'required|array|min:1',
+        'products.*.product_id' => 'required|exists:products,id',
+        'products.*.quantity' => 'required|numeric|min:0',
     ]);
 
-    // 2. Cek apakah kombinasi product_id dan tossa_id sudah ada
-    $exists = Stocks::where('product_id', $request->product_id)
-                    ->where('tossa_id', $request->tossa_id)
-                    ->exists();
+    $errors = [];
 
-    // 3. Jika kombinasi sudah ada, kembalikan dengan error
-    if ($exists) {
-        return back()->withErrors(['duplicate' => ' Produk ini sudah ada di dalam stok Supply Network'])->withInput();
+    foreach ($request->products as $item) {
+        $exists = Stocks::where('product_id', $item['product_id'])
+                        ->where('tossa_id', $request->tossa_id)
+                        ->exists();
+
+        if ($exists) {
+            $productName = \App\Models\Product::find($item['product_id'])?->name ?? 'Produk ID '.$item['product_id'];
+            $errors[] = "Produk '$productName' sudah ada di jaringan ini.";
+            continue;
+        }
+
+        Stocks::create([
+            'product_id' => $item['product_id'],
+            'tossa_id'   => $request->tossa_id,
+            'quantity'   => $item['quantity'],
+        ]);
     }
 
-    // 4. Jika kombinasi belum ada, buat entri stok baru
-    Stocks::create($request->all());
+    if ($errors) {
+        return back()->withErrors($errors)->withInput();
+    }
 
-    // 5. Redirect dengan pesan sukses
     return redirect()->route('admin.stock')->with('success', 'Stok berhasil ditambahkan.');
 }
+
 
     public function update (Request $request, $id)
     {
