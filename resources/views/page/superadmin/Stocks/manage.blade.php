@@ -19,7 +19,7 @@
             <h3>{{ $data->exists ? 'Edit Stok Produk' : 'Tambah Banyak Stok' }}</h3>
         </div>
         <div class="card-body">
-            <form action="{{ $data->exists ? route('admin.stock.update', $data->id) : route('admin.stock.store') }}" method="POST">
+            <form  onsubmit="return confirm('Apakah Anda yakin menyimpan data ini?')" action="{{ $data->exists ? route('admin.stock.update', $data->id) : route('admin.stock.store') }}" method="POST">
                 @csrf
                 @if($data->exists)
                     @method('PUT')
