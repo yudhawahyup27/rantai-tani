@@ -78,7 +78,7 @@
                                         <tr class="text-center">
                                             <th>No</th>
                                             <th>Name</th>
-                                            <th>Image</th>
+
                                             <th>Price Buy</th>
                                             <th>Laba</th>
                                             <th>Price Sell</th>
@@ -100,13 +100,13 @@
                                         <tr class="text-center">
                                             <td>{{ (($dataBeli->currentPage() - 1) * $dataBeli->perPage()) + $loop->iteration }}</td>
                                             <td>{{ $sn->name }}</td>
-                                            <td>
+                                            {{-- <td>
                                                 @if($sn->image)
                                                     <img src="{{ asset('/storage/app/public/' . $sn->image) }}" alt="{{ $sn->name }}" width="100">
                                                 @else
                                                     <span class="text-muted">No Image</span>
                                                 @endif
-                                            </td>
+                                            </td> --}}
                                             <td>Rp. {{ number_format($sn->price, 0, ',', '.') }}</td>
                                             <td>Rp. {{ number_format($sn->laba, 0, ',', '.') }}</td>
                                             <td>Rp. {{ number_format($sn->price_sell, 0, ',', '.') }}</td>
@@ -250,7 +250,7 @@
                                         <tr class="text-center">
                                             <th>No</th>
                                             <th>Name</th>
-                                            <th>Image</th>
+
                                             <th>Price Buy</th>
                                             <th>Laba</th>
                                             <th>Price Sell</th>
@@ -273,13 +273,13 @@
                                         <tr class="text-center">
                                             <td>{{ (($dataTitipan->currentPage() - 1) * $dataTitipan->perPage()) + $loop->iteration }}</td>
                                             <td>{{ $sn->name }}</td>
-                                            <td>
+                                            {{-- <td>
                                                 @if($sn->image)
                                                     <img src="{{ asset('/storage/app/public/' . $sn->image) }}" alt="{{ $sn->name }}" width="100">
                                                 @else
                                                     <span class="text-muted">No Image</span>
                                                 @endif
-                                            </td>
+                                            </td> --}}
                                             <td>Rp. {{ number_format($sn->price, 0, ',', '.') }}</td>
                                             <td>Rp. {{ number_format($sn->laba, 0, ',', '.') }}</td>
                                             <td>Rp. {{ number_format($sn->price_sell, 0, ',', '.') }}</td>
