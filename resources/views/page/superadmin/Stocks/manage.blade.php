@@ -28,7 +28,7 @@
                 {{-- Supply Network --}}
                 <div class="mb-3">
                     <label for="tossa_id" class="form-label">Supply Network</label>
-                    <select name="tossa_id" class="form-select" required {{ $data->exists ? 'disabled' : '' }}>
+                    <select name="tossa_id" class="form-select select2" required {{ $data->exists ? 'disabled' : '' }}>
                         <option value="">-- Pilih Network --</option>
                         @foreach ($tossa as $t)
                             <option value="{{ $t->id }}"
@@ -48,7 +48,7 @@
                         <div class="row mb-3 product-row">
                             <div class="col-md-6">
                                 <label>Produk</label>
-                                <select name="products[0][product_id]" class="form-select" required>
+                                <select name="products[0][product_id]" class="form-select select2" required>
                                     <option value="">-- Pilih Produk --</option>
                                     @foreach ($product as $p)
                                         <option value="{{ $p->id }}">{{ $p->name }}</option>
@@ -66,10 +66,10 @@
                     </div>
                     <button type="button" class="btn btn-secondary mb-3" id="add-product">+ Tambah Produk</button>
                 @else
-                {{-- Form Edit --}}
+                    {{-- Form Edit --}}
                     <div class="mb-3">
                         <label for="product_id" class="form-label">Produk</label>
-                        <select name="product_id" class="form-select" required disabled>
+                        <select name="product_id" class="form-select select2" required disabled>
                             @foreach ($product as $p)
                                 <option value="{{ $p->id }}" {{ $p->id == $data->product_id ? 'selected' : '' }}>
                                     {{ $p->name }}
@@ -98,22 +98,44 @@
     </div>
 </div>
 
-{{-- JS untuk dynamic input --}}
+{{-- Select2 JS + jQuery --}}
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
+{{-- JS untuk dynamic input dan Select2 --}}
 @if (!$data->exists)
 <script>
 document.addEventListener('DOMContentLoaded', function () {
+    // Inisialisasi Select2 awal
+    $('.select2').select2({
+        theme: 'bootstrap-5',
+        width: '100%'
+    });
+
     let index = 1;
 
     document.getElementById('add-product').addEventListener('click', function () {
         const container = document.getElementById('product-container');
         const newRow = document.querySelector('.product-row').cloneNode(true);
 
+        // Reset value dan ganti index name
         newRow.querySelectorAll('select, input').forEach(function (el) {
-            el.name = el.name.replace(/\d+/, index);
+            el.name = el.name.replace(/\[\d+\]/, `[${index}]`);
             el.value = '';
         });
 
+        // Hapus Select2 lama dan re-init
+        $(newRow).find('select.select2').select2('destroy');
+
         container.appendChild(newRow);
+
+        // Init Select2 ulang setelah append
+        $(newRow).find('select.select2').select2({
+            theme: 'bootstrap-5',
+            width: '100%'
+        });
+
         index++;
     });
 
