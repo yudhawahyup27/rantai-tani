@@ -65,7 +65,7 @@
                                         Tidak Ada Gambar
                                     @endif
                                 </td>
-                                <td>{{ number_format($datas->product->price ?? 0, 0, ',', '.') }}</td> {{-- Format harga --}}
+                                <td>{{ number_format($datas->product->price_sell ?? 0, 0, ',', '.') }}</td> {{-- Format harga --}}
                                 <td>{{ $datas->quantity }}</td>
                                 <td>{{ $datas->product->category ?? '-' }}</td>
                                 <td>{{  $datas->product->satuan->nama_satuan ?? '-' }}</td>
