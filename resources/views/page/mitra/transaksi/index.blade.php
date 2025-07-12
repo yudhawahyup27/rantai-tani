@@ -464,7 +464,7 @@
     <input
         type="number"
         name="stock"
-        value="{{ $totalStock) }}"
+        value="{{ old('total', $totalStock) }}"
         class="form-control"
         min="0"
         required
