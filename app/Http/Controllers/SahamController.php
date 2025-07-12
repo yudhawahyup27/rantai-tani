@@ -56,24 +56,32 @@ public function update(Request $request, $id)
 {
     $saham = Mastersaham::findOrFail($id);
 
+    // Hitung total baru
+    $total = $request->totallot * $request->harga;
 
-    $total =  $request->totallot * $request->harga;
+    // Hitung perubahan lot
+    $selisihLot = $request->totallot - $saham->totallot;
 
-    // Perbaikan logika sisa saham:
-    // Jumlah saham yang ada SEKARANG dikurangi saham yang sudah masuk (dari database)
-    $sisaSaham = $saham->totallot - $saham->sahamterjual;
+    // Update sahamtersedia dengan mempertahankan sahamterjual
+    $sahamtersediaBaru = $saham->sahamtersedia + $selisihLot;
+
+    // Jangan sampai sahamtersedia jadi negatif
+    if ($sahamtersediaBaru < 0) {
+        return back()->withErrors(['totallot' => 'Jumlah lot tidak boleh lebih kecil dari saham yang sudah terjual.']);
+    }
 
     $saham->update([
         'tossa_id' => $request->tossa_id,
         'totallot' => $request->totallot,
         'harga' => $request->harga,
-        'sahamtersedia' => $sisaSaham,
+        'sahamtersedia' => $sahamtersediaBaru,
         'persentase' => $request->persentase,
         'total' => $total,
     ]);
 
     return redirect()->route('admin.saham')->with('success', 'Data saham berhasil diupdate.');
 }
+
 
 public function destroy ($id){
     $saham = Mastersaham::findOrFail($id);
