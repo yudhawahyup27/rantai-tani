@@ -211,9 +211,9 @@
                                         </div>
                                         <div>
                                             <h5 class="card-title mb-1">{{ $item->product->name }}</h5>
-                                            <p class="mb-1">Dagangan Dibawa: <strong>{{ $item->quantity }}</strong></p>
                                             <p class="mb-1">Shift: <span class="shift-display">{{ $shift ?? '-' }}</span></p>
-                                            <p class="mb-1">Kulakan Pagi: {{ $latestAddedStocks[$item->id] ?? 0 }}</p>
+                                            {{-- <p class="mb-1">Dagangan Dibawa: <strong>{{ $item->quantity }}</strong></p>
+                                            <p class="mb-1">Kulakan Pagi: {{ $latestAddedStocks[$item->id] ?? 0 }}</p> --}}
                                             <p class="mb-2">Harga Beli: <strong>Rp{{ number_format($item->product->price_sell, 0, ',', '.') }}</strong></p>
                                             <button type="button" class="btn btn-sm btn-primary btn-update me-1" data-bs-toggle="modal" data-bs-target="#stokModal{{ $item->id }}" disabled>
                                                 Update Stok
@@ -248,9 +248,9 @@
                                         </div>
                                         <div>
                                             <h5 class="card-title mb-1">{{ $item->product->name }}</h5>
-                                            <p class="mb-1">Dagangan Dibawa: <strong>{{ $item->quantity }}</strong></p>
+                                            {{-- <p class="mb-1">Dagangan Dibawa: <strong>{{ $item->quantity }}</strong></p> --}}
                                             <p class="mb-1">Shift: <span class="shift-display">{{ $shift ?? '-' }}</span></p>
-                                            <p class="mb-1">Kulakan Pagi: {{ $latestAddedStocks[$item->id] ?? 0 }}</p>
+                                            {{-- <p class="mb-1">Kulakan Pagi: {{ $latestAddedStocks[$item->id] ?? 0 }}</p> --}}
                                             <p class="mb-2">Harga Beli: <strong>Rp{{ number_format($item->product->price_sell, 0, ',', '.') }}</strong></p>
                                             <button type="button" class="btn btn-sm btn-primary btn-update me-1" data-bs-toggle="modal" data-bs-target="#stokModal{{ $item->id }}" disabled>
                                                 Update Stok
@@ -285,9 +285,9 @@
                                         </div>
                                         <div>
                                             <h5 class="card-title mb-1">{{ $item->product->name }}</h5>
-                                            <p class="mb-1">Dagangan Dibawa: <strong>{{ $item->quantity }}</strong></p>
                                             <p class="mb-1">Shift: <span class="shift-display">{{ $shift ?? '-' }}</span></p>
-                                            <p class="mb-1">Kulakan Pagi: {{ $latestAddedStocks[$item->id] ?? 0 }}</p>
+                                            {{-- <p class="mb-1">Dagangan Dibawa: <strong>{{ $item->quantity }}</strong></p>
+                                            <p class="mb-1">Kulakan Pagi: {{ $latestAddedStocks[$item->id] ?? 0 }}</p> --}}
                                             <p class="mb-2">Harga Beli: <strong>Rp{{ number_format($item->product->price_sell, 0, ',', '.') }}</strong></p>
                                             <button type="button" class="btn btn-sm btn-primary btn-update me-1" data-bs-toggle="modal" data-bs-target="#stokModal{{ $item->id }}" disabled>
                                                 Update Stok
@@ -322,9 +322,9 @@
                                         </div>
                                         <div>
                                             <h5 class="card-title mb-1">{{ $item->product->name }}</h5>
-                                            <p class="mb-1">Dagangan Dibawa: <strong>{{ $item->quantity }}</strong></p>
                                             <p class="mb-1">Shift: <span class="shift-display">{{ $shift ?? '-' }}</span></p>
-                                            <p class="mb-1">Kulakan Pagi: {{ $latestAddedStocks[$item->id] ?? 0 }}</p>
+                                            {{-- <p class="mb-1">Dagangan Dibawa: <strong>{{ $item->quantity }}</strong></p>
+                                            <p class="mb-1">Kulakan Pagi: {{ $latestAddedStocks[$item->id] ?? 0 }}</p> --}}
                                             <p class="mb-2">Harga Beli: <strong>Rp{{ number_format($item->product->price_sell, 0, ',', '.') }}</strong></p>
                                             <button type="button" class="btn btn-sm btn-primary btn-update me-1" data-bs-toggle="modal" data-bs-target="#stokModal{{ $item->id }}" disabled>
                                                 Update Stok
@@ -359,9 +359,9 @@
                                         </div>
                                         <div>
                                             <h5 class="card-title mb-1">{{ $item->product->name }}</h5>
-                                            <p class="mb-1">Dagangan Dibawa: <strong>{{ $item->quantity }}</strong></p>
                                             <p class="mb-1">Shift: <span class="shift-display">{{ $shift ?? '-' }}</span></p>
-                                            <p class="mb-1">Kulakan Pagi: {{ $latestAddedStocks[$item->id] ?? 0 }}</p>
+                                            {{-- <p class="mb-1">Dagangan Dibawa: <strong>{{ $item->quantity }}</strong></p>
+                                            <p class="mb-1">Kulakan Pagi: {{ $latestAddedStocks[$item->id] ?? 0 }}</p> --}}
                                             <p class="mb-2">Harga Beli: <strong>Rp{{ number_format($item->product->price_sell, 0, ',', '.') }}</strong></p>
                                             <button type="button" class="btn btn-sm btn-primary btn-update me-1" data-bs-toggle="modal" data-bs-target="#stokModal{{ $item->id }}" disabled>
                                                 Update Stok
@@ -396,9 +396,9 @@
                                         </div>
                                         <div>
                                             <h5 class="card-title mb-1">{{ $item->product->name }}</h5>
-                                            <p class="mb-1">Dagangan Dibawa: <strong>{{ $item->quantity }}</strong></p>
                                             <p class="mb-1">Shift: <span class="shift-display">{{ $shift ?? '-' }}</span></p>
-                                            <p class="mb-1">Kulakan Pagi: {{ $latestAddedStocks[$item->id] ?? 0 }}</p>
+                                            {{-- <p class="mb-1">Dagangan Dibawa: <strong>{{ $item->quantity }}</strong></p>
+                                            <p class="mb-1">Kulakan Pagi: {{ $latestAddedStocks[$item->id] ?? 0 }}</p> --}}
                                             <p class="mb-2">Harga Beli: <strong>Rp{{ number_format($item->product->price_sell, 0, ',', '.') }}</strong></p>
                                             <button type="button" class="btn btn-sm btn-primary btn-update me-1" data-bs-toggle="modal" data-bs-target="#stokModal{{ $item->id }}" disabled>
                                                 Update Stok
@@ -448,6 +448,18 @@
                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Tutup"></button>
                         </div>
                         <div class="modal-body">
+                            <div class="mb-3">
+                                <label  class="form-label">Stock Lama</label>
+                                <input type="number" name="stock" value="{{ $item->quantity }}" class="form-control" min="0" required>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Stock Kulakan</label>
+                                <input type="number" name="stock" value="{{ $latestAddedStocks[$item->id] ?? 0 }}" class="form-control" min="0" required>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Total</label>
+                                <input type="number" name="stock" value="{{ $latestAddedStocks[$item->id]* $item->quantity}}" class="form-control" min="0" required>
+                            </div>
                             <div class="mb-3">
                                 <label for="stok{{ $item->id }}" class="form-label">Jumlah Stok Sekarang</label>
                                 <input type="number" name="stock" id="stok{{ $item->id }}" class="form-control" min="0" required>
