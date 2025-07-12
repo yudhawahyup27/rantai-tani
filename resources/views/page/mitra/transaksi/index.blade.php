@@ -449,16 +449,16 @@
                         </div>
                         <div class="modal-body">
                             <div class="mb-3">
-                                <label  class="form-label">Stock Lama</label>
-                                <input type="number" name="stock" value="{{ $item->quantity }}" class="form-control" min="0" required>
+                              <small>Stock Yang Di Bawa</small>
+                              <p>{{ $item->quantity }}</p>
                             </div>
                             <div class="mb-3">
-                                <label class="form-label">Stock Kulakan</label>
-                                <input type="number" name="stock" value="{{ $latestAddedStocks[$item->id] ?? 0 }}" class="form-control" min="0" required>
+                               <small>Stock Kulakan</small>
+                               <p>{{ $latestAddedStocks[$item->id] ?? 0 }}</p>
                             </div>
                             <div class="mb-3">
-                                <label class="form-label">Total</label>
-                                <input type="number" name="stock" value="{{ $latestAddedStocks[$item->id]* $item->quantity}}" class="form-control" min="0" required>
+                                <small>Total</small>
+                               <p>{{ $latestAddedStocks[$item->id] * $item->quantity}}</p>
                             </div>
                             <div class="mb-3">
                                 <label for="stok{{ $item->id }}" class="form-label">Jumlah Stok Sekarang</label>
