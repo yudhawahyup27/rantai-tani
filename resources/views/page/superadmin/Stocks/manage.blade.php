@@ -19,7 +19,7 @@
             <h3>{{ $data->exists ? 'Edit Stok Produk' : 'Tambah Banyak Stok' }}</h3>
         </div>
         <div class="card-body">
-            <form onsubmit="return confirm('Apakah Anda yakin menyimpan data ini?')" action="{{ $data->exists ? route('admin.stock.update', $data->id) : route('admin.stock.store') }}" method="POST">
+            <form  onsubmit="return confirm('Apakah Anda yakin menyimpan data ini?')" action="{{ $data->exists ? route('admin.stock.update', $data->id) : route('admin.stock.store') }}" method="POST">
                 @csrf
                 @if($data->exists)
                     @method('PUT')
@@ -42,19 +42,6 @@
                     @endif
                 </div>
 
-                {{-- Pilihan Shift (Untuk semua produk) --}}
-                @if(!$data->exists)
-                    <div class="mb-4">
-                        <label for="shift" class="form-label">Pilih Shift</label>
-                        <select name="shift" class="form-select" required>
-                            <option value="">-- Pilih Shift --</option>
-                            <option value="pagi" {{ old('shift') == 'pagi' ? 'selected' : '' }}>Pagi</option>
-                            <option value="sore" {{ old('shift') == 'sore' ? 'selected' : '' }}>Sore</option>
-                        </select>
-                        <small class="text-muted">Shift ini akan berlaku untuk semua produk yang ditambahkan</small>
-                    </div>
-                @endif
-
                 {{-- Form Create (Multiple Products) --}}
                 @if(!$data->exists)
                     <div id="product-container">
@@ -69,9 +56,8 @@
                                 </select>
                             </div>
                             <div class="col-md-4">
-                                <label>Stok Akhir</label>
-                                <input type="number" name="products[0][stock]" class="form-control" min="0" required>
-                                <small class="text-muted">Jumlah stok yang tersisa</small>
+                                <label>Jumlah</label>
+                                <input type="text" name="products[0][quantity]" class="form-control" required>
                             </div>
                             <div class="col-md-2 d-flex align-items-end">
                                 <button type="button" class="btn btn-danger remove-row">Hapus</button>
@@ -94,23 +80,13 @@
                     </div>
 
                     <div class="mb-3">
-                        <label for="shift" class="form-label">Shift</label>
-                        <select name="shift" class="form-select" required>
-                            <option value="">-- Pilih Shift --</option>
-                            <option value="pagi" {{ old('shift', $data->shifts ?? '') == 'pagi' ? 'selected' : '' }}>Pagi</option>
-                            <option value="sore" {{ old('shift', $data->shifts ?? '') == 'sore' ? 'selected' : '' }}>Sore</option>
-                        </select>
-                    </div>
-
-                    <div class="mb-3">
-                        <label for="stock" class="form-label">Stok Akhir</label>
-                        <input type="number" name="stock" class="form-control" min="0" value="{{ old('stock', $data->stock_end ?? '') }}" required>
-                        <small class="text-muted">Jumlah stok yang tersisa</small>
+                        <label for="quantity_new" class="form-label">Jumlah Stok Baru</label>
+                        <input type="text" name="quantity_new" class="form-control" value="{{ old('quantity_new', $data->quantity_new) }}">
                     </div>
 
                     <div class="mb-3">
                         <label for="quantity" class="form-label">Jumlah Total Stok</label>
-                        <input type="number" name="quantity" class="form-control" min="0" value="{{ old('quantity', $data->quantity ?? '') }}">
+                        <input type="text" name="quantity" class="form-control" value="{{ old('quantity', $data->quantity) }}">
                         <small class="text-danger">*Isi jika ingin mengoreksi jumlah stok total</small>
                     </div>
                 @endif
