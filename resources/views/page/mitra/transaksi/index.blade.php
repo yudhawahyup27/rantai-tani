@@ -53,6 +53,43 @@
     .nav-tabs .nav-link.active .badge-count {
         background-color: #007bff;
     }
+
+    /* Style untuk shift selector */
+    .shift-selector {
+        background-color: #f8f9fa;
+        border: 1px solid #dee2e6;
+        border-radius: 0.375rem;
+        padding: 1rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .shift-selector h6 {
+        margin-bottom: 0.75rem;
+        color: #495057;
+    }
+
+    .shift-selector .form-check-input:checked {
+        background-color: #007bff;
+        border-color: #007bff;
+    }
+
+    .shift-selector .form-check-label {
+        font-weight: 500;
+        color: #495057;
+    }
+
+    /* Disabled state untuk tombol update */
+    .btn-update:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+    }
+
+    /* Alert untuk shift yang dipilih */
+    .current-shift-alert {
+        background-color: #d1ecf1;
+        border-color: #bee5eb;
+        color: #0c5460;
+    }
 </style>
 @endpush
 
@@ -84,15 +121,6 @@
         </div>
     @endif
 
-    {{-- Debug Info (hapus setelah testing) --}}
-    {{-- @if(config('app.debug'))
-        <div class="alert alert-info">
-            <strong>Debug Info:</strong><br>
-            Total products: {{ $products->count() }}<br>
-            Category counts: {{ json_encode($categoryCount) }}
-        </div>
-    @endif --}}
-
     {{-- Card --}}
     <div class="card shadow">
         <div class="card-header d-flex justify-content-between">
@@ -100,6 +128,35 @@
             <a class="btn btn-primary" href="/dashboard/mitra/transaksi/history">Cek History</a>
         </div>
         <div class="card-body">
+            {{-- Shift Selector --}}
+            <div class="shift-selector">
+                <h6><i class="bi bi-clock"></i> Pilih Shift Kerja</h6>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="globalShift" id="shiftPagi" value="pagi">
+                            <label class="form-check-label" for="shiftPagi">
+                                <i class="bi bi-sunrise"></i> Shift Pagi
+                            </label>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="globalShift" id="shiftSore" value="sore">
+                            <label class="form-check-label" for="shiftSore">
+                                <i class="bi bi-sunset"></i> Shift Sore
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {{-- Alert untuk shift yang dipilih --}}
+            <div id="currentShiftAlert" class="alert current-shift-alert d-none" role="alert">
+                <i class="bi bi-info-circle"></i>
+                <strong>Shift yang dipilih:</strong> <span id="currentShiftText"></span>
+            </div>
+
             {{-- Tab Navigation --}}
             <ul class="nav nav-tabs" id="categoryTabs" role="tablist">
                 <li class="nav-item" role="presentation">
@@ -155,10 +212,10 @@
                                         <div>
                                             <h5 class="card-title mb-1">{{ $item->product->name }}</h5>
                                             <p class="mb-1">Dagangan Dibawa: <strong>{{ $item->quantity }}</strong></p>
-                                            <p class="mb-1">Shift: {{ $shift ?? '-' }}</p>
+                                            <p class="mb-1">Shift: <span class="shift-display">{{ $shift ?? '-' }}</span></p>
                                             <p class="mb-1">Kulakan Pagi: {{ $latestAddedStocks[$item->id] ?? 0 }}</p>
                                             <p class="mb-2">Harga Beli: <strong>Rp{{ number_format($item->product->price_sell, 0, ',', '.') }}</strong></p>
-                                            <button type="button" class="btn btn-sm btn-primary me-1" data-bs-toggle="modal" data-bs-target="#stokModal{{ $item->id }}">
+                                            <button type="button" class="btn btn-sm btn-primary btn-update me-1" data-bs-toggle="modal" data-bs-target="#stokModal{{ $item->id }}" disabled>
                                                 Update Stok
                                             </button>
                                             <button type="button" class="btn btn-sm btn-secondary" data-bs-toggle="modal" data-bs-target="#productModal{{ $item->id }}">
@@ -192,10 +249,10 @@
                                         <div>
                                             <h5 class="card-title mb-1">{{ $item->product->name }}</h5>
                                             <p class="mb-1">Dagangan Dibawa: <strong>{{ $item->quantity }}</strong></p>
-                                            <p class="mb-1">Shift: {{ $shift ?? '-' }}</p>
+                                            <p class="mb-1">Shift: <span class="shift-display">{{ $shift ?? '-' }}</span></p>
                                             <p class="mb-1">Kulakan Pagi: {{ $latestAddedStocks[$item->id] ?? 0 }}</p>
                                             <p class="mb-2">Harga Beli: <strong>Rp{{ number_format($item->product->price_sell, 0, ',', '.') }}</strong></p>
-                                            <button type="button" class="btn btn-sm btn-primary me-1" data-bs-toggle="modal" data-bs-target="#stokModal{{ $item->id }}">
+                                            <button type="button" class="btn btn-sm btn-primary btn-update me-1" data-bs-toggle="modal" data-bs-target="#stokModal{{ $item->id }}" disabled>
                                                 Update Stok
                                             </button>
                                             <button type="button" class="btn btn-sm btn-secondary" data-bs-toggle="modal" data-bs-target="#productModal{{ $item->id }}">
@@ -229,10 +286,10 @@
                                         <div>
                                             <h5 class="card-title mb-1">{{ $item->product->name }}</h5>
                                             <p class="mb-1">Dagangan Dibawa: <strong>{{ $item->quantity }}</strong></p>
-                                            <p class="mb-1">Shift: {{ $shift ?? '-' }}</p>
+                                            <p class="mb-1">Shift: <span class="shift-display">{{ $shift ?? '-' }}</span></p>
                                             <p class="mb-1">Kulakan Pagi: {{ $latestAddedStocks[$item->id] ?? 0 }}</p>
                                             <p class="mb-2">Harga Beli: <strong>Rp{{ number_format($item->product->price_sell, 0, ',', '.') }}</strong></p>
-                                            <button type="button" class="btn btn-sm btn-primary me-1" data-bs-toggle="modal" data-bs-target="#stokModal{{ $item->id }}">
+                                            <button type="button" class="btn btn-sm btn-primary btn-update me-1" data-bs-toggle="modal" data-bs-target="#stokModal{{ $item->id }}" disabled>
                                                 Update Stok
                                             </button>
                                             <button type="button" class="btn btn-sm btn-secondary" data-bs-toggle="modal" data-bs-target="#productModal{{ $item->id }}">
@@ -266,10 +323,10 @@
                                         <div>
                                             <h5 class="card-title mb-1">{{ $item->product->name }}</h5>
                                             <p class="mb-1">Dagangan Dibawa: <strong>{{ $item->quantity }}</strong></p>
-                                            <p class="mb-1">Shift: {{ $shift ?? '-' }}</p>
+                                            <p class="mb-1">Shift: <span class="shift-display">{{ $shift ?? '-' }}</span></p>
                                             <p class="mb-1">Kulakan Pagi: {{ $latestAddedStocks[$item->id] ?? 0 }}</p>
                                             <p class="mb-2">Harga Beli: <strong>Rp{{ number_format($item->product->price_sell, 0, ',', '.') }}</strong></p>
-                                            <button type="button" class="btn btn-sm btn-primary me-1" data-bs-toggle="modal" data-bs-target="#stokModal{{ $item->id }}">
+                                            <button type="button" class="btn btn-sm btn-primary btn-update me-1" data-bs-toggle="modal" data-bs-target="#stokModal{{ $item->id }}" disabled>
                                                 Update Stok
                                             </button>
                                             <button type="button" class="btn btn-sm btn-secondary" data-bs-toggle="modal" data-bs-target="#productModal{{ $item->id }}">
@@ -303,10 +360,10 @@
                                         <div>
                                             <h5 class="card-title mb-1">{{ $item->product->name }}</h5>
                                             <p class="mb-1">Dagangan Dibawa: <strong>{{ $item->quantity }}</strong></p>
-                                            <p class="mb-1">Shift: {{ $shift ?? '-' }}</p>
+                                            <p class="mb-1">Shift: <span class="shift-display">{{ $shift ?? '-' }}</span></p>
                                             <p class="mb-1">Kulakan Pagi: {{ $latestAddedStocks[$item->id] ?? 0 }}</p>
                                             <p class="mb-2">Harga Beli: <strong>Rp{{ number_format($item->product->price_sell, 0, ',', '.') }}</strong></p>
-                                            <button type="button" class="btn btn-sm btn-primary me-1" data-bs-toggle="modal" data-bs-target="#stokModal{{ $item->id }}">
+                                            <button type="button" class="btn btn-sm btn-primary btn-update me-1" data-bs-toggle="modal" data-bs-target="#stokModal{{ $item->id }}" disabled>
                                                 Update Stok
                                             </button>
                                             <button type="button" class="btn btn-sm btn-secondary" data-bs-toggle="modal" data-bs-target="#productModal{{ $item->id }}">
@@ -340,10 +397,10 @@
                                         <div>
                                             <h5 class="card-title mb-1">{{ $item->product->name }}</h5>
                                             <p class="mb-1">Dagangan Dibawa: <strong>{{ $item->quantity }}</strong></p>
-                                            <p class="mb-1">Shift: {{ $shift ?? '-' }}</p>
+                                            <p class="mb-1">Shift: <span class="shift-display">{{ $shift ?? '-' }}</span></p>
                                             <p class="mb-1">Kulakan Pagi: {{ $latestAddedStocks[$item->id] ?? 0 }}</p>
                                             <p class="mb-2">Harga Beli: <strong>Rp{{ number_format($item->product->price_sell, 0, ',', '.') }}</strong></p>
-                                            <button type="button" class="btn btn-sm btn-primary me-1" data-bs-toggle="modal" data-bs-target="#stokModal{{ $item->id }}">
+                                            <button type="button" class="btn btn-sm btn-primary btn-update me-1" data-bs-toggle="modal" data-bs-target="#stokModal{{ $item->id }}" disabled>
                                                 Update Stok
                                             </button>
                                             <button type="button" class="btn btn-sm btn-secondary" data-bs-toggle="modal" data-bs-target="#productModal{{ $item->id }}">
@@ -396,12 +453,9 @@
                                 <input type="number" name="stock" id="stok{{ $item->id }}" class="form-control" min="0" required>
                             </div>
                             <div class="mb-3">
-                                <label for="shift{{ $item->id }}" class="form-label">Pilih Shift</label>
-                                <select name="shift" id="shift{{ $item->id }}" class="form-select" required>
-                                    <option value="">-- Pilih Shift --</option>
-                                    <option value="pagi">Pagi</option>
-                                    <option value="sore">Sore</option>
-                                </select>
+                                <label class="form-label">Shift yang Dipilih</label>
+                                <input type="text" class="form-control shift-display-input" readonly>
+                                <input type="hidden" name="shift" class="shift-hidden-input">
                             </div>
                         </div>
                         <div class="modal-footer">
@@ -461,4 +515,121 @@
         </div>
     @endforeach
 @endif
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    let selectedShift = null;
+
+    // Elements
+    const shiftRadios = document.querySelectorAll('input[name="globalShift"]');
+    const updateButtons = document.querySelectorAll('.btn-update');
+    const currentShiftAlert = document.getElementById('currentShiftAlert');
+    const currentShiftText = document.getElementById('currentShiftText');
+    const shiftDisplays = document.querySelectorAll('.shift-display');
+    const shiftDisplayInputs = document.querySelectorAll('.shift-display-input');
+    const shiftHiddenInputs = document.querySelectorAll('.shift-hidden-input');
+
+    // Function to update shift display
+    function updateShiftDisplay(shift) {
+        const shiftText = shift === 'pagi' ? 'Shift Pagi' : 'Shift Sore';
+
+        // Update all shift displays
+        shiftDisplays.forEach(display => {
+            display.textContent = shiftText;
+        });
+
+        // Update modal inputs
+        shiftDisplayInputs.forEach(input => {
+            input.value = shiftText;
+        });
+
+        shiftHiddenInputs.forEach(input => {
+            input.value = shift;
+        });
+
+        // Update alert
+        currentShiftText.textContent = shiftText;
+        currentShiftAlert.classList.remove('d-none');
+    }
+
+    // Function to enable/disable update buttons
+    function toggleUpdateButtons(enable) {
+        updateButtons.forEach(button => {
+            button.disabled = !enable;
+            if (enable) {
+                button.classList.remove('disabled');
+            } else {
+                button.classList.add('disabled');
+            }
+        });
+    }
+
+    // Event listeners for shift selection
+    shiftRadios.forEach(radio => {
+        radio.addEventListener('change', function() {
+            if (this.checked) {
+                selectedShift = this.value;
+                updateShiftDisplay(selectedShift);
+                toggleUpdateButtons(true);
+
+                // Disable all radio buttons after selection
+                shiftRadios.forEach(r => {
+                    r.disabled = true;
+                });
+
+                // Add a "change shift" button
+                if (!document.getElementById('changeShiftBtn')) {
+                    const changeBtn = document.createElement('button');
+                    changeBtn.id = 'changeShiftBtn';
+                    changeBtn.type = 'button';
+                    changeBtn.className = 'btn btn-sm btn-outline-primary ms-3';
+                    changeBtn.innerHTML = '<i class="bi bi-arrow-repeat"></i> Ubah Shift';
+                    changeBtn.onclick = function() {
+                        // Re-enable radio buttons
+                        shiftRadios.forEach(r => {
+                            r.disabled = false;
+                            r.checked = false;
+                        });
+
+                        // Reset displays
+                        shiftDisplays.forEach(display => {
+                            display.textContent = '-';
+                        });
+
+                        // Hide alert
+                        currentShiftAlert.classList.add('d-none');
+
+                        // Disable update buttons
+                        toggleUpdateButtons(false);
+
+                        // Remove change button
+                        changeBtn.remove();
+
+                        selectedShift = null;
+                    };
+
+                    // Add button after the shift selector
+                    document.querySelector('.shift-selector').appendChild(changeBtn);
+                }
+            }
+        });
+    });
+
+    // Initial state - buttons disabled
+    toggleUpdateButtons(false);
+
+    // Form validation before submit
+    document.querySelectorAll('form').forEach(form => {
+        form.addEventListener('submit', function(e) {
+            const shiftInput = this.querySelector('.shift-hidden-input');
+            if (shiftInput && !shiftInput.value) {
+                e.preventDefault();
+                alert('Silakan pilih shift terlebih dahulu!');
+                return false;
+            }
+        });
+    });
+});
+</script>
+
 @endsection

@@ -132,78 +132,14 @@ public function index()
     ));
 }
 
-public function store(Request $request)
+public function store(Request $request, $productId)
 {
-    $user = auth()->user();
-
-    // Validasi untuk form multiple products
-    if ($request->has('products')) {
-        $request->validate([
-            'tossa_id' => 'required|exists:tossas,id',
-            'shift' => 'required|in:pagi,sore',
-            'products' => 'required|array|min:1',
-            'products.*.product_id' => 'required|exists:products,id',
-            'products.*.stock' => 'required|integer|min:0',
-        ]);
-
-        $errors = [];
-        $success = 0;
-
-        foreach ($request->products as $productData) {
-            $productId = $productData['product_id'];
-            $stockEnd = $productData['stock'];
-
-            // Cek stok awal
-            $stokAwal = Stocks::where('product_id', $productId)
-                ->where('tossa_id', $request->tossa_id)
-                ->first();
-
-            if (!$stokAwal) {
-                $errors[] = "Stok awal tidak ditemukan untuk produk ID: {$productId}";
-                continue;
-            }
-
-            if ($stockEnd > $stokAwal->quantity) {
-                $errors[] = "Stok akhir melebihi stok awal untuk produk ID: {$productId}";
-                continue;
-            }
-
-            $soldQuantity = max(0, $stokAwal->quantity - $stockEnd);
-
-            // Simpan ke MitraStock
-            MitraStock::create([
-                'user_id'       => $user->id,
-                'tossa_id'      => $request->tossa_id,
-                'product_id'    => $productId,
-                'stock_start'   => $stokAwal->quantity,
-                'stock_end'     => $stockEnd,
-                'sold_quantity' => $soldQuantity,
-                'shifts'        => $request->shift,
-            ]);
-
-            // Update stok
-            $stokAwal->update(['quantity' => $stockEnd]);
-            $success++;
-        }
-
-        if (!empty($errors)) {
-            return redirect()->back()
-                ->withErrors($errors)
-                ->with('success', $success > 0 ? "Berhasil memproses {$success} produk" : null);
-        }
-
-        return redirect()->back()->with('success', "Berhasil memproses {$success} produk");
-    }
-
-    // Validasi untuk form single product (edit)
     $request->validate([
-        'product_id' => 'required|exists:products,id',
         'stock' => 'required|integer|min:0',
         'shift' => 'required|in:pagi,sore',
     ]);
 
-    $productId = $request->product_id;
-    $stockEnd = $request->stock;
+    $user = auth()->user();
 
     $stokAwal = Stocks::where('product_id', $productId)
         ->where('tossa_id', $user->id_tossa)
@@ -213,26 +149,44 @@ public function store(Request $request)
         return redirect()->back()->with('error', 'Stok awal tidak ditemukan.');
     }
 
+    $stockEnd = $request->stock;
+
     if ($stockEnd > $stokAwal->quantity) {
-        return redirect()->back()->with('error', 'Stok akhir melebihi stok awal.');
+        return redirect()->back()->with('error', 'Stok tersisa melebihi stok awal.');
     }
 
     $soldQuantity = max(0, $stokAwal->quantity - $stockEnd);
 
-    MitraStock::create([
-        'user_id'       => $user->id,
-        'tossa_id'      => $user->id_tossa,
-        'product_id'    => $productId,
-        'stock_start'   => $stokAwal->quantity,
-        'stock_end'     => $stockEnd,
-        'sold_quantity' => $soldQuantity,
-        'shifts'        => $request->shift,
-    ]);
+    // Cek apakah sudah ada record untuk produk ini hari ini
+    $existingRecord = MitraStock::where('user_id', $user->id)
+        ->where('product_id', $productId)
+        ->whereDate('created_at', today())
+        ->first();
+
+    if ($existingRecord) {
+        // Update record yang sudah ada
+        $existingRecord->update([
+            'stock_end' => $stockEnd,
+            'sold_quantity' => $soldQuantity,
+        ]);
+    } else {
+        // Buat record baru
+        MitraStock::create([
+            'user_id'       => $user->id,
+            'tossa_id'      => $user->id_tossa,
+            'product_id'    => $productId,
+            'stock_start'   => $stokAwal->quantity,
+            'stock_end'     => $stockEnd,
+            'sold_quantity' => $soldQuantity,
+            'shifts'        => $request->shift,
+        ]);
+    }
 
     $stokAwal->update(['quantity' => $stockEnd]);
 
     return redirect()->back()->with('success', 'Stok berhasil diperbarui.');
 }
+
 
 
 public function submitOmset()
