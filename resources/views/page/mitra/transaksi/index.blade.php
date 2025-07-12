@@ -456,10 +456,21 @@
                                 <label class="form-label">Stock Kulakan</label>
                                 <input type="number" name="stock" value="{{ $latestAddedStocks[$item->id] ?? 0 }}" class="form-control" min="0" required>
                             </div>
-                            <div class="mb-3">
-                                <label class="form-label">Total</label>
-                               <p></p> {{ $latestAddedStocks[$item->id] * $item->quantity}}
-                            </div>
+                       <div class="mb-3">
+    <label class="form-label">Total</label>
+    @php
+        $totalStock = ($latestAddedStocks[$item->id] ?? 0) * $item->quantity;
+    @endphp
+    <input
+        type="number"
+        name="stock"
+        value="{{ $totalStock) }}"
+        class="form-control"
+        min="0"
+        required
+    >
+</div>
+
                             <div class="mb-3">
                                 <label for="stok{{ $item->id }}" class="form-label">Jumlah Stok Sekarang</label>
                                 <input type="number" name="stock" id="stok{{ $item->id }}" class="form-control" min="0" required>
