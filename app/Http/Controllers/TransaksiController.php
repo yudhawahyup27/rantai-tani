@@ -358,7 +358,7 @@ public function indexAdmin(Request $request)
         $revenues->where('shift', 'sore')->sum('revenue'),
     ];
 
-    return view('page.superadmin.laporanOmset.index', [
+    return view('page.superadmin.LaporanOmset.index', [
         'revenues'   => $revenues,
         'chartLabels'=> $chartLabels,
         'chartData'  => $chartData,
