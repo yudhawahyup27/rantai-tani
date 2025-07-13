@@ -129,6 +129,9 @@ Route::middleware(['auth', 'role:administrator'])->prefix('dashboard/admin')->gr
           Route::post('/store', [LaporanController::class, 'store'])->name('admin.laporan.store');
         Route::put('/update/{id}', [LaporanController::class, 'update'])->name('admin.laporan.update');
     });
+
+    Route::get('/laporan-keuangan', [LaporanKeuanganMitra::class,'index'])->name('admin.laporan-keuangan.index');
+    Route::put('/laporan-keuangan/update/{id}', [LaporanKeuanganMitra::class, 'updateStatus'])->name('admin.laporan-keuangan.update');
 });
 
 Route::middleware(['auth', 'role:mitra'])->prefix('/dashboard/mitra')->group(function () {
