@@ -39,6 +39,11 @@ Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 Route::middleware(['auth', 'role:administrator'])->prefix('dashboard/admin')->group(function () {
     Route::get('/', [DashboardadminCntroller::class,'index'])->name('dashboard.administrator');
     // CRUD User (Satu halaman untuk Create & Edit)
+
+    Route::prefix('/laporan-keuangan')->group(function () {
+        Route::get('/', [TransaksiController::class, 'index'])->name('admin.laporan-keuangan.index');
+        Route::put('/update/{id}', [TransaksiController::class, 'updateStatus'])->name('admin.laporan-keuangan.update');
+    });
         Route::prefix('/user')->group(function (){
             Route::get('/', [UserController::class, 'userpage'])->name('admin.user');
             Route::get('/manage/{id?}', [UserController::class, 'manage'])->name('admin.user.manage');
@@ -79,8 +84,7 @@ Route::middleware(['auth', 'role:administrator'])->prefix('dashboard/admin')->gr
     });
 
 
-    Route::get('/laporan-keuangan', [TransaksiController::class,'index'])->name('admin.laporan-keuangan.index');
-    Route::put('/laporan-keuangan/update/{id}', [TransaksiController::class, 'updateStatus'])->name('admin.laporan-keuangan.update');
+
     // CRUD Investor
     Route::prefix('/investor')->group(function () {
         Route::get('/', [InvestorController::class, 'index'])->name('admin.investor');
