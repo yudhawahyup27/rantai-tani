@@ -113,6 +113,14 @@ $isActiveInvestor = Request::routeIs('admin.investor', 'admin.takeover');
                             <span class="nav-link-text">Manajemen Sewa</span>
                         </a>
                     </li>
+                    <li class="nav-item">
+                        <a class="nav-link {{ Request::routeIs('admin.laporan-keuangan.index') ? 'active' : '' }}" href="{{ route('admin.laporan-keuangan.index') }}">
+                            <div class="icon icon-shape icon-sm border-radius-md text-center me-2 d-flex align-items-center justify-content-center">
+                                <i class="ni ni-box-2 text-dark text-sm opacity-10"></i>
+                            </div>
+                            <span class="nav-link-text">Laporan </span>
+                        </a>
+                    </li>
                 @endif
 
                 @if(auth()->user()->hasRole('mitra'))

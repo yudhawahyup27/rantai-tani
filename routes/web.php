@@ -130,8 +130,8 @@ Route::middleware(['auth', 'role:administrator'])->prefix('dashboard/admin')->gr
         Route::put('/update/{id}', [LaporanController::class, 'update'])->name('admin.laporan.update');
     });
 
-    Route::get('/laporan-keuangan', [LaporanKeuanganMitra::class,'index'])->name('admin.laporan-keuangan.index');
-    Route::put('/laporan-keuangan/update/{id}', [LaporanKeuanganMitra::class, 'updateStatus'])->name('admin.laporan-keuangan.update');
+    Route::get('/laporan-keuangan', [TransaksiController::class,'index'])->name('admin.laporan-keuangan.index');
+    Route::put('/laporan-keuangan/update/{id}', [TransaksiController::class, 'updateStatus'])->name('admin.laporan-keuangan.update');
 });
 
 Route::middleware(['auth', 'role:mitra'])->prefix('/dashboard/mitra')->group(function () {

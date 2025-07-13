@@ -187,7 +187,18 @@ public function store(Request $request, $productId)
     return redirect()->back()->with('success', 'Stok berhasil diperbarui.');
 }
 
+public function updateStatus(Request $request, $id)
+{
+    $request->validate([
+        'status' => 'required|string|in:Pending,Lunas,Batal',
+    ]);
 
+    $omset = DailyRevenue::findOrFail($id);
+    $omset->status = $request->status;
+    $omset->save();
+
+    return back()->with('success', 'Status berhasil diperbarui.');
+}
 
 public function submitOmset()
 {

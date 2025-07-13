@@ -11,7 +11,7 @@ class DailyRevenue extends Model
      protected $fillable = [
       'tossa_id', 'date', 'shift', 'product_id',
     'stock_start', 'sold_quantity', 'stock_end',
-    'start_value', 'sold_value', 'end_value', 'revenue', 'id_user'
+    'start_value', 'sold_value', 'end_value', 'revenue', 'id_user','status'
     ];
 
     public function product()
