@@ -139,7 +139,7 @@ Route::middleware(['auth', 'role:administrator'])->prefix('dashboard/admin')->gr
     });
 
         Route::prefix('/laporan-keuangan')->group(function () {
-        Route::get('/', [TransaksiController::class, 'indexAdmin'])->name('admin.laporan-keuangan.index');
+        Route::get('/', [TransaksiController::class, 'indexadmin'])->name('admin.laporan-keuangan.index');
         Route::put('/update/{id}', [TransaksiController::class, 'updateStatus'])->name('admin.laporan-keuangan.update');
     });
 });

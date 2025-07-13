@@ -315,6 +315,125 @@ public function Omset(Request $request)
     ]);
 }
 
+public function indexadmin()
+{
+    $user = auth()->user();
+
+    // Debug: Cek apakah user memiliki tossa_id
+    if (!$user->id_tossa) {
+        return redirect()->back()->with('error', 'Tossa ID tidak ditemukan');
+    }
+
+    $products = Stocks::with(['product', 'newStock' => function($query) {
+        $query->whereDate('created_at', Carbon::today())
+              ->orderBy('created_at', 'desc');
+    }])
+    ->where('tossa_id', $user->id_tossa)
+    ->get();
+
+    // Debug: Cek total produk
+    logger('Total products found: ' . $products->count());
+
+    // Buat konstanta data stok hari ini
+    $stokHariIni = [];
+    $latestAddedStocks = [];
+
+    foreach ($products as $product) {
+        $todayStock = $product->newStock->first();
+        $stokHariIni[$product->id] = $todayStock ? $todayStock->quantity_added : 0;
+        $latestAddedStocks[$product->id] = $todayStock ? $todayStock->quantity_added : 0;
+    }
+
+    // Definisikan jenis dan kategori yang valid
+    $validJenis = ['sayur', 'buah', 'garingan'];
+    $validCategories = ['beli', 'titipan'];
+
+    // Grouping produk berdasarkan jenis dan kategori
+    $productsByCategory = [];
+    $categoryCount = [];
+    $debugInfo = []; // Untuk debugging
+
+    foreach ($products as $product) {
+        // Debug: Cek apakah relasi product ada
+        if (!$product->product) {
+            logger('Product relation not found for stock ID: ' . $product->id);
+            continue;
+        }
+
+        $jenis = strtolower(trim($product->product->jenis ?? ''));
+        $category = strtolower(trim($product->product->category ?? ''));
+
+        // Debug: Log jenis dan kategori
+        $debugInfo[] = [
+            'product_id' => $product->product->id,
+            'name' => $product->product->name,
+            'jenis' => $jenis,
+            'category' => $category,
+            'original_jenis' => $product->product->jenis,
+            'original_category' => $product->product->category
+        ];
+
+        // Validasi jenis dan kategori
+        if (!in_array($jenis, $validJenis) || !in_array($category, $validCategories)) {
+            logger('Invalid jenis or category: ' . $jenis . ' - ' . $category);
+            continue;
+        }
+
+        // Buat struktur array berdasarkan jenis dan kategori
+        if (!isset($productsByCategory[$jenis])) {
+            $productsByCategory[$jenis] = [];
+        }
+
+        if (!isset($productsByCategory[$jenis][$category])) {
+            $productsByCategory[$jenis][$category] = [];
+        }
+
+        $productsByCategory[$jenis][$category][] = $product;
+    }
+
+    // Debug: Log hasil grouping
+    logger('Debug info for products:', $debugInfo);
+    foreach ($productsByCategory as $jenis => $categories) {
+        foreach ($categories as $category => $items) {
+            logger("Products in {$jenis} - {$category}: " . count($items));
+        }
+    }
+
+    // Hitung jumlah produk per jenis dan kategori
+    foreach ($productsByCategory as $jenis => $categories) {
+        foreach ($categories as $category => $items) {
+            $categoryCount[$jenis][$category] = count($items);
+        }
+    }
+
+    // Pastikan semua jenis dan kategori yang diperlukan tersedia
+    $requiredJenis = ['sayur', 'buah', 'garingan'];
+    $requiredCategories = ['beli', 'titipan'];
+
+    foreach ($requiredJenis as $jenis) {
+        if (!isset($productsByCategory[$jenis])) {
+            $productsByCategory[$jenis] = [];
+        }
+
+        foreach ($requiredCategories as $category) {
+            if (!isset($productsByCategory[$jenis][$category])) {
+                $productsByCategory[$jenis][$category] = [];
+                $categoryCount[$jenis][$category] = 0;
+            }
+        }
+    }
+
+    $shift = $user->workShift->name ?? '-';
+
+    return view('page.superadmin.laporanOmset.index', compact(
+        'products',
+        'productsByCategory',
+        'categoryCount',
+        'stokHariIni',
+        'shift',
+        'latestAddedStocks'
+    ));
+}
 
 
 }
