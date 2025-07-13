@@ -315,15 +315,20 @@ public function Omset(Request $request)
     ]);
 }
 
-public function indexadmin()
+use Carbon\Carbon;
+use Illuminate\Http\Request;
+use App\Models\Stocks;
+use App\Models\Revenue;
+
+public function indexAdmin(Request $request)
 {
     $user = auth()->user();
 
-    // Debug: Cek apakah user memiliki tossa_id
     if (!$user->id_tossa) {
         return redirect()->back()->with('error', 'Tossa ID tidak ditemukan');
     }
 
+    // Ambil semua produk terkait tossa
     $products = Stocks::with(['product', 'newStock' => function($query) {
         $query->whereDate('created_at', Carbon::today())
               ->orderBy('created_at', 'desc');
@@ -331,10 +336,7 @@ public function indexadmin()
     ->where('tossa_id', $user->id_tossa)
     ->get();
 
-    // Debug: Cek total produk
-    logger('Total products found: ' . $products->count());
-
-    // Buat konstanta data stok hari ini
+    // Data stok hari ini
     $stokHariIni = [];
     $latestAddedStocks = [];
 
@@ -344,86 +346,75 @@ public function indexadmin()
         $latestAddedStocks[$product->id] = $todayStock ? $todayStock->quantity_added : 0;
     }
 
-    // Definisikan jenis dan kategori yang valid
+    // Group produk berdasarkan jenis dan kategori
     $validJenis = ['sayur', 'buah', 'garingan'];
     $validCategories = ['beli', 'titipan'];
-
-    // Grouping produk berdasarkan jenis dan kategori
     $productsByCategory = [];
     $categoryCount = [];
-    $debugInfo = []; // Untuk debugging
 
     foreach ($products as $product) {
-        // Debug: Cek apakah relasi product ada
-        if (!$product->product) {
-            logger('Product relation not found for stock ID: ' . $product->id);
-            continue;
-        }
+        if (!$product->product) continue;
 
         $jenis = strtolower(trim($product->product->jenis ?? ''));
         $category = strtolower(trim($product->product->category ?? ''));
 
-        // Debug: Log jenis dan kategori
-        $debugInfo[] = [
-            'product_id' => $product->product->id,
-            'name' => $product->product->name,
-            'jenis' => $jenis,
-            'category' => $category,
-            'original_jenis' => $product->product->jenis,
-            'original_category' => $product->product->category
-        ];
-
-        // Validasi jenis dan kategori
-        if (!in_array($jenis, $validJenis) || !in_array($category, $validCategories)) {
-            logger('Invalid jenis or category: ' . $jenis . ' - ' . $category);
-            continue;
-        }
-
-        // Buat struktur array berdasarkan jenis dan kategori
-        if (!isset($productsByCategory[$jenis])) {
-            $productsByCategory[$jenis] = [];
-        }
-
-        if (!isset($productsByCategory[$jenis][$category])) {
-            $productsByCategory[$jenis][$category] = [];
-        }
+        if (!in_array($jenis, $validJenis) || !in_array($category, $validCategories)) continue;
 
         $productsByCategory[$jenis][$category][] = $product;
     }
 
-    // Debug: Log hasil grouping
-    logger('Debug info for products:', $debugInfo);
-    foreach ($productsByCategory as $jenis => $categories) {
-        foreach ($categories as $category => $items) {
-            logger("Products in {$jenis} - {$category}: " . count($items));
-        }
-    }
-
-    // Hitung jumlah produk per jenis dan kategori
-    foreach ($productsByCategory as $jenis => $categories) {
-        foreach ($categories as $category => $items) {
-            $categoryCount[$jenis][$category] = count($items);
-        }
-    }
-
-    // Pastikan semua jenis dan kategori yang diperlukan tersedia
-    $requiredJenis = ['sayur', 'buah', 'garingan'];
-    $requiredCategories = ['beli', 'titipan'];
-
-    foreach ($requiredJenis as $jenis) {
-        if (!isset($productsByCategory[$jenis])) {
-            $productsByCategory[$jenis] = [];
-        }
-
-        foreach ($requiredCategories as $category) {
-            if (!isset($productsByCategory[$jenis][$category])) {
-                $productsByCategory[$jenis][$category] = [];
-                $categoryCount[$jenis][$category] = 0;
-            }
+    // Hitung total per kategori
+    foreach ($validJenis as $jenis) {
+        foreach ($validCategories as $category) {
+            $productsByCategory[$jenis][$category] = $productsByCategory[$jenis][$category] ?? [];
+            $categoryCount[$jenis][$category] = count($productsByCategory[$jenis][$category]);
         }
     }
 
     $shift = $user->workShift->name ?? '-';
+
+    // --------------------------
+    // 🔽 Revenue dan Filter 🔽
+    // --------------------------
+
+    $filter = $request->filter ?? 'hari';
+    $startDate = $request->start_date;
+    $endDate = $request->end_date;
+
+    $revenuesQuery = Revenue::with('product')
+        ->where('tossa_id', $user->id_tossa);
+
+    // Filter berdasarkan jenis
+    switch ($filter) {
+        case 'range':
+            if ($startDate && $endDate) {
+                $revenuesQuery->whereBetween('date', [$startDate, $endDate]);
+            }
+            break;
+        case 'minggu':
+            $revenuesQuery->whereBetween('date', [
+                Carbon::now()->startOfWeek(), Carbon::now()->endOfWeek()
+            ]);
+            break;
+        case 'bulan':
+            $revenuesQuery->whereMonth('date', Carbon::now()->month);
+            break;
+        default: // hari
+            $revenuesQuery->whereDate('date', Carbon::today());
+            break;
+    }
+
+    $revenues = $revenuesQuery->orderBy('date')->get();
+
+    // Data chart
+    $chartLabels = [];
+    $chartData = [];
+
+    $groupedByShift = $revenues->groupBy('shift');
+    foreach ($groupedByShift as $shiftName => $items) {
+        $chartLabels[] = ucfirst($shiftName);
+        $chartData[] = $items->sum('revenue');
+    }
 
     return view('page.superadmin.laporanOmset.index', compact(
         'products',
@@ -431,7 +422,13 @@ public function indexadmin()
         'categoryCount',
         'stokHariIni',
         'shift',
-        'latestAddedStocks'
+        'latestAddedStocks',
+        'revenues',
+        'chartLabels',
+        'chartData',
+        'filter',
+        'startDate',
+        'endDate'
     ));
 }
 
