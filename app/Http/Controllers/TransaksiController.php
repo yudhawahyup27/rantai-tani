@@ -7,6 +7,7 @@ use App\Models\MitraStock;
 use App\Models\newStock;
 use App\Models\Product;
 use App\Models\Stocks;
+use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 
@@ -290,7 +291,7 @@ public function Omset(Request $request)
     }
 
     $revenues = DailyRevenue::with('product')
-        ->where('tossa_id', $tossaId)
+        ->where('tossa_id', operator: $tossaId)
         ->whereBetween('date', [$dateFrom->format('Y-m-d'), $dateTo->format('Y-m-d')])
         ->orderBy('date')
         ->get();
@@ -315,122 +316,58 @@ public function Omset(Request $request)
     ]);
 }
 
-use Carbon\Carbon;
-use Illuminate\Http\Request;
-use App\Models\Stocks;
-use App\Models\Revenue;
-
 public function indexAdmin(Request $request)
 {
-    $user = auth()->user();
+    // Ambil semua user dengan role "mitra"
+    $mitraUsers = User::where('role', 'mitra')->whereNotNull('id_tossa')->get();
 
-    if (!$user->id_tossa) {
-        return redirect()->back()->with('error', 'Tossa ID tidak ditemukan');
+    // Ambil semua ID tossa dari user mitra
+    $tossaIds = $mitraUsers->pluck('id_tossa')->toArray();
+
+    // Ambil filter dari request
+    $filter = $request->get('filter', 'hari');
+    $startDate = $request->get('start_date');
+    $endDate = $request->get('end_date');
+
+    // Default: hari ini
+    $dateFrom = Carbon::today();
+    $dateTo = Carbon::today();
+
+    if ($filter === 'minggu') {
+        $dateFrom = Carbon::now()->startOfWeek();
+        $dateTo = Carbon::now()->endOfWeek();
+    } elseif ($filter === 'bulan') {
+        $dateFrom = Carbon::now()->startOfMonth();
+        $dateTo = Carbon::now()->endOfMonth();
+    } elseif ($filter === 'range' && $startDate && $endDate) {
+        $dateFrom = Carbon::parse($startDate);
+        $dateTo = Carbon::parse($endDate);
     }
 
-    // Ambil semua produk terkait tossa
-    $products = Stocks::with(['product', 'newStock' => function($query) {
-        $query->whereDate('created_at', Carbon::today())
-              ->orderBy('created_at', 'desc');
-    }])
-    ->where('tossa_id', $user->id_tossa)
-    ->get();
+    // Ambil semua revenue berdasarkan filter tanggal & tossa_id dari user mitra
+    $revenues = DailyRevenue::with('product')
+        ->whereIn('tossa_id', $tossaIds)
+        ->whereBetween('date', [$dateFrom->format('Y-m-d'), $dateTo->format('Y-m-d')])
+        ->orderBy('date')
+        ->get();
 
-    // Data stok hari ini
-    $stokHariIni = [];
-    $latestAddedStocks = [];
+    // Siapkan data chart (pagi vs sore)
+    $chartLabels = ['Pagi', 'Sore'];
+    $chartData = [
+        $revenues->where('shift', 'pagi')->sum('revenue'),
+        $revenues->where('shift', 'sore')->sum('revenue'),
+    ];
 
-    foreach ($products as $product) {
-        $todayStock = $product->newStock->first();
-        $stokHariIni[$product->id] = $todayStock ? $todayStock->quantity_added : 0;
-        $latestAddedStocks[$product->id] = $todayStock ? $todayStock->quantity_added : 0;
-    }
-
-    // Group produk berdasarkan jenis dan kategori
-    $validJenis = ['sayur', 'buah', 'garingan'];
-    $validCategories = ['beli', 'titipan'];
-    $productsByCategory = [];
-    $categoryCount = [];
-
-    foreach ($products as $product) {
-        if (!$product->product) continue;
-
-        $jenis = strtolower(trim($product->product->jenis ?? ''));
-        $category = strtolower(trim($product->product->category ?? ''));
-
-        if (!in_array($jenis, $validJenis) || !in_array($category, $validCategories)) continue;
-
-        $productsByCategory[$jenis][$category][] = $product;
-    }
-
-    // Hitung total per kategori
-    foreach ($validJenis as $jenis) {
-        foreach ($validCategories as $category) {
-            $productsByCategory[$jenis][$category] = $productsByCategory[$jenis][$category] ?? [];
-            $categoryCount[$jenis][$category] = count($productsByCategory[$jenis][$category]);
-        }
-    }
-
-    $shift = $user->workShift->name ?? '-';
-
-    // --------------------------
-    // 🔽 Revenue dan Filter 🔽
-    // --------------------------
-
-    $filter = $request->filter ?? 'hari';
-    $startDate = $request->start_date;
-    $endDate = $request->end_date;
-
-    $revenuesQuery = Revenue::with('product')
-        ->where('tossa_id', $user->id_tossa);
-
-    // Filter berdasarkan jenis
-    switch ($filter) {
-        case 'range':
-            if ($startDate && $endDate) {
-                $revenuesQuery->whereBetween('date', [$startDate, $endDate]);
-            }
-            break;
-        case 'minggu':
-            $revenuesQuery->whereBetween('date', [
-                Carbon::now()->startOfWeek(), Carbon::now()->endOfWeek()
-            ]);
-            break;
-        case 'bulan':
-            $revenuesQuery->whereMonth('date', Carbon::now()->month);
-            break;
-        default: // hari
-            $revenuesQuery->whereDate('date', Carbon::today());
-            break;
-    }
-
-    $revenues = $revenuesQuery->orderBy('date')->get();
-
-    // Data chart
-    $chartLabels = [];
-    $chartData = [];
-
-    $groupedByShift = $revenues->groupBy('shift');
-    foreach ($groupedByShift as $shiftName => $items) {
-        $chartLabels[] = ucfirst($shiftName);
-        $chartData[] = $items->sum('revenue');
-    }
-
-    return view('page.superadmin.laporanOmset.index', compact(
-        'products',
-        'productsByCategory',
-        'categoryCount',
-        'stokHariIni',
-        'shift',
-        'latestAddedStocks',
-        'revenues',
-        'chartLabels',
-        'chartData',
-        'filter',
-        'startDate',
-        'endDate'
-    ));
+    return view('page.superadmin.laporanOmset.index', [
+        'revenues'   => $revenues,
+        'chartLabels'=> $chartLabels,
+        'chartData'  => $chartData,
+        'filter'     => $filter,
+        'startDate'  => $dateFrom->format('Y-m-d'),
+        'endDate'    => $dateTo->format('Y-m-d'),
+    ]);
 }
+
 
 
 }
