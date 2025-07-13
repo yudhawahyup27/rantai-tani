@@ -319,7 +319,7 @@ public function Omset(Request $request)
 public function indexAdmin(Request $request)
 {
     // Ambil semua user dengan role "mitra"
-    $mitraUsers = User::where('role', 'mitra')->whereNotNull('id_tossa')->get();
+    $mitraUsers = User::where('role', '2')->whereNotNull('id_tossa')->get();
 
     // Ambil semua ID tossa dari user mitra
     $tossaIds = $mitraUsers->pluck('id_tossa')->toArray();
