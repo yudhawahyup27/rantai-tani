@@ -122,10 +122,11 @@ public function update(Request $request, $id)
         ->whereDate('created_at', $today)
         ->value('hargaSewa') ?? 0;
 
-    $labakotor = $request->ravenue - ($request->pengeluaran + $request->gajikaryawan + $lakuterjual);
+    $labakotor = $request->ravenue - $lakuterjual;
     $labaBersih = $labakotor;
-    $grosMargin = $request->ravenue > 0 ? ($labakotor / $request->ravenue) * 100 : 0;
-    $margin = $lakuterjual - $request->ravenue;
+    $grosMargin = ($labakotor + $request->pengeluaran) * 100 / ($request->ravenue ?: 1); // Avoid division by zero
+    $margin =   $request->ravenue - $stokDibawa;
+    $labadibawa = $margin - $sewa -  $request->gajikaryawan;
 
     $laporan->update([
         'tossa_id' => $tossaId,
@@ -133,11 +134,11 @@ public function update(Request $request, $id)
         'ravenue' => $request->ravenue,
         'pengeluaran' => $request->pengeluaran,
         'gajikaryawan' => $request->gajikaryawan,
-        'daganganBaru' => $lakuterjual,
+        'daganganBaru' =>   $stokDibawa,
         'labakotor' => $labakotor,
         'margin' => $margin,
         'sewaTossa' => $sewa,
-        'labaDibawa' => $stokDibawa,
+        'labaDibawa' => $labadibawa ,
         'daganganlakuterjual' => $lakuterjual,
         'grosMargin' => $grosMargin,
         'labaBersih' => $labaBersih,
