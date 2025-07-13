@@ -40,10 +40,7 @@ Route::middleware(['auth', 'role:administrator'])->prefix('dashboard/admin')->gr
     Route::get('/', [DashboardadminCntroller::class,'index'])->name('dashboard.administrator');
     // CRUD User (Satu halaman untuk Create & Edit)
 
-    Route::prefix('/laporan-keuangan')->group(function () {
-        Route::get('/', [TransaksiController::class, 'index'])->name('admin.laporan-keuangan.index');
-        Route::put('/update/{id}', [TransaksiController::class, 'updateStatus'])->name('admin.laporan-keuangan.update');
-    });
+
         Route::prefix('/user')->group(function (){
             Route::get('/', [UserController::class, 'userpage'])->name('admin.user');
             Route::get('/manage/{id?}', [UserController::class, 'manage'])->name('admin.user.manage');
@@ -51,6 +48,11 @@ Route::middleware(['auth', 'role:administrator'])->prefix('dashboard/admin')->gr
             Route::put('/update/{id}', [UserController::class, 'update'])->name('admin.user.update');
             Route::delete('/delete/{id}', [UserController::class, 'destroy'])->name('admin.user.delete');
         });
+
+        Route::prefix('/laporan-keuangan')->group(function () {
+        Route::get('/', [TransaksiController::class, 'index'])->name('admin.laporan-keuangan.index');
+        Route::put('/update/{id}', [TransaksiController::class, 'updateStatus'])->name('admin.laporan-keuangan.update');
+    });
 
         // Crud Supply Network
         Route::prefix('/supply')->group(function () {
@@ -136,6 +138,10 @@ Route::middleware(['auth', 'role:administrator'])->prefix('dashboard/admin')->gr
         Route::put('/update/{id}', [LaporanController::class, 'update'])->name('admin.laporan.update');
     });
 
+        Route::prefix('/laporan-keuangan')->group(function () {
+        Route::get('/', [TransaksiController::class, 'indexAdmin'])->name('admin.laporan-keuangan.index');
+        Route::put('/update/{id}', [TransaksiController::class, 'updateStatus'])->name('admin.laporan-keuangan.update');
+    });
 });
 
 Route::middleware(['auth', 'role:mitra'])->prefix('/dashboard/mitra')->group(function () {
